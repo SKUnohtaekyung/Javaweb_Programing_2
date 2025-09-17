@@ -16,4 +16,14 @@ public class DemoController { // 클래스 이름은 대문자로 시작하는 �
         // "hello"라는 이름의 뷰(보통 hello.html)를 찾아 렌더링하도록 반환합니다.
         return "hello";
     }
+
+        @GetMapping("/about_detailed")
+    public String aboutDetailed() {
+        return "about_detailed";
+    }
+
+    @GetMapping("/")
+    public String index() {
+        return "index";
+    }
 }
