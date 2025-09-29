@@ -1,165 +1,192 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="ko" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>About Detailed | Noh TaeKyung</title>
-    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <title>Skills | Noh TaeKyung's Portfolio</title>
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;700;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+    <!-- Google Fonts: Noto Sans KR -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <!-- Alpine.js for tabs -->
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    
+    <script>
+        // Inherit tailwind config from index.html
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'sans': ['Noto Sans KR', 'sans-serif']
+                    },
+                    colors: {
+                        'brand-green': '#38bdf8', // 포인트 컬러
+                        'text-primary': '#111111', // 기본 텍스트
+                        'text-secondary': '#757575',
+                        'border-color': '#E0E0E0',
+                        'background-color': '#FFFFFF',
+                        'section-bg': '#F8F9FA', // 섹션 배경
+                    },
+                }
+            }
+        }
+    </script>
     <style>
-        :root {
-            --bg-dark: #111111;
-            --text-light: #f5f5f5;
-            --accent: #38bdf8;
-        }
-        html, body {
-            font-family: 'Pretendard', sans-serif;
-            background-color: var(--bg-dark);
-            color: var(--text-light);
-            margin: 0; padding: 0;
-        }
-        .medium-text { font-size: clamp(1.5rem, 4vw, 2.5rem); font-weight: 700; line-height: 1.2; }
-        .normal-text { font-size: clamp(1rem, 1.2vw, 1.1rem); line-height: 1.8; color: #a1a1aa; }
-        .content-section h3 {
-            font-size: clamp(1.2rem, 2vw, 1.5rem);
-            font-weight: 700;
-            color: var(--text-light);
-            margin-top: 2.5rem;
-            margin-bottom: 1rem;
-        }
-        .border-react { border-color: #61DAFB; }
-        .border-javascript { border-color: #F7DF1E; }
-        .border-typescript { border-color: #3178C6; }
-        .border-figma { border-color: #0ACF83; }
+        body { color: #111111; }
+        .section-title { @apply text-3xl font-bold text-text-primary text-center tracking-tight; }
+        .section-subtitle { @apply text-base text-text-secondary text-center mb-12; }
+        .skill-title { @apply text-4xl font-bold mb-3; }
+        .skill-subtitle { @apply text-xl font-bold text-text-primary mt-8 mb-4; }
+        .skill-text { @apply text-text-secondary leading-relaxed; }
+        .tab-button { @apply py-2 px-4 font-bold border-b-2 transition-colors duration-300; }
+        .tab-button.active { border-color: var(--tab-color); color: var(--tab-color); }
+        .tab-button:not(.active) { @apply text-text-secondary border-transparent hover:text-text-primary; }
+        aside nav a { @apply block font-bold text-text-secondary hover:text-text-primary pl-4 py-2 border-l-2 border-transparent transition-all; }
+        aside nav a.active { @apply text-brand-green border-brand-green; }
     </style>
 </head>
-<body class="antialiased">
+<body class="font-sans bg-background-color">
 
-    <header class="p-8 flex justify-between items-center sticky top-0 bg-black bg-opacity-50 backdrop-blur-lg z-10">
-        <a href="index.html" class="text-2xl font-bold link-hover">Noh TaeKyung</a>
-        <a href="/#skills" class="text-sky-400 font-bold link-hover">
-            <i class="fa-solid fa-arrow-left mr-2"></i>
-            Back to Main
-        </a>
+    <!-- ===== HEADER ===== -->
+    <header class="fixed top-0 left-0 w-full z-50 transition-all duration-300 md:top-4">
+        <nav class="flex justify-between items-center h-20 w-full bg-background-color/50 backdrop-blur-lg border-b border-border-color shadow-md 
+                   md:max-w-3xl md:mx-auto md:h-16 md:rounded-full md:border md:px-8">
+            <a href="/" class="text-2xl font-bold text-text-primary pl-4 md:pl-0">TK</a>
+            <a href="/#skills" class="text-text-primary hover:text-brand-green font-medium px-3 py-2 transition-colors duration-300 flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-1"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+                Back
+            </a>
+        </nav>
     </header>
 
-    <main class="max-w-7xl mx-auto p-8 md:p-16">
-        <div class="md:grid md:grid-cols-3 md:gap-16">
-            <div class="md:col-span-1 md:sticky md:top-32 self-start">
-                <h2 class="medium-text mb-8">SKILLS &<br>TOOLS</h2>
-                <nav class="space-y-4">
-                    <a href="#react" class="block font-bold text-neutral-500 hover:text-white">REACT</a>
-                    <a href="#javascript" class="block font-bold text-neutral-500 hover:text-white">JAVASCRIPT</a>
-                    <a href="#typescript" class="block font-bold text-neutral-500 hover:text-white">TYPESCRIPT</a>
-                    <a href="#figma" class="block font-bold text-neutral-500 hover:text-white">FIGMA</a>
-                </nav>
+    <main class="container mx-auto px-4 md:px-6 pt-32 pb-16">
+        <section id="skills-detailed">
+            <div class="text-center">
+                <h1 class="section-title text-5xl mb-4">SKILLS & TOOLS</h1>
+                <p class="section-subtitle">기술 스택에 대한 상세 설명입니다.</p>
             </div>
 
-            <div class="md:col-span-2 mt-16 md:mt-0 content-section">
-                <!-- React -->
-                <div id="react" class="mb-24">
-                    <h2 class="medium-text" style="color: #61DAFB;">REACT</h2>
-                    <p class="normal-text mt-4">
-                        사용자 인터페이스를 만들기 위한 선언적이고 효율적이며 유연한 JavaScript 라이브러리입니다. '컴포넌트'라는 작고 고립된 코드 조각을 사용하여 복잡한 UI를 구축할 수 있습니다.
-                    </p>
-                    <h3>핵심 컨셉: Virtual DOM</h3>
-                    <p class="normal-text">
-                        React는 실제 DOM의 가상 표현을 메모리에 유지하여, 상태 변경 시 이전 가상 DOM과 비교해 변경된 부분만 실제 DOM에 적용합니다. 이 '조정(reconciliation)' 과정은 DOM 조작을 최소화하여 애플리케이션의 성능을 크게 향상시킵니다.
-                    </p>
-                    <h3>주요 특징</h3>
-                    <div class="mt-4" x-data="{ tab: 'component' }">
-                        <div class="flex border-b border-neutral-700 mb-4">
-                            <button @click="tab = 'component'" :class="{ 'text-white border-react': tab === 'component', 'text-neutral-500 border-transparent': tab !== 'component' }" class="py-2 px-4 font-bold border-b-2 transition">컴포넌트 기반</button>
-                            <button @click="tab = 'dataflow'" :class="{ 'text-white border-react': tab === 'dataflow', 'text-neutral-500 border-transparent': tab !== 'dataflow' }" class="py-2 px-4 font-bold border-b-2 transition">단방향 데이터 흐름</button>
-                            <button @click="tab = 'hooks'" :class="{ 'text-white border-react': tab === 'hooks', 'text-neutral-500 border-transparent': tab !== 'hooks' }" class="py-2 px-4 font-bold border-b-2 transition">Hooks</button>
-                        </div>
-                        <div>
-                            <div x-show="tab === 'component'" x-transition class="normal-text">UI를 재사용 가능한 독립적인 부분으로 나누어 개발 생산성과 유지보수성을 높입니다.</div>
-                            <div x-show="tab === 'dataflow'" x-transition class="normal-text">데이터가 부모에서 자식으로 단방향으로 흐르므로, 데이터 흐름을 예측하고 디버깅하기 쉽습니다.</div>
-                            <div x-show="tab === 'hooks'" x-transition class="normal-text">함수형 컴포넌트에서 상태(State)와 생명주기(Lifecycle) 기능을 사용하여 더 간결하고 직관적인 코드를 작성할 수 있습니다.</div>
-                        </div>
-                    </div>
-                </div>
+            <div class="md:grid md:grid-cols-4 md:gap-16 mt-16">
+                <!-- Sticky Navigation -->
+                <aside class="md:col-span-1 md:sticky md:top-32 self-start">
+                    <nav id="side-nav" class="flex flex-col space-y-2">
+                        <a href="#react">REACT</a>
+                        <a href="#javascript">JAVASCRIPT</a>
+                        <a href="#typescript">TYPESCRIPT</a>
+                        <a href="#figma">FIGMA</a>
+                    </nav>
+                </aside>
 
-                <!-- JavaScript -->
-                <div id="javascript" class="mb-24">
-                    <h2 class="medium-text" style="color: #F7DF1E;">JAVASCRIPT</h2>
-                    <p class="normal-text mt-4">
-                        웹 페이지에 생동감을 불어넣는 동적인 스크립팅 언어입니다. 현대 웹 개발의 핵심 기술로, 프론트엔드와 백엔드(Node.js) 모두에서 사용됩니다.
-                    </p>
-                    <h3>핵심 컨셉: 비동기 처리</h3>
-                    <p class="normal-text">
-                        JavaScript는 단일 스레드로 동작하지만, 이벤트 루프와 콜백, Promise, async/await를 통해 비동기 작업을 효율적으로 처리합니다. 이를 통해 네트워크 요청이나 대용량 파일 처리 중에도 UI가 멈추지 않고 사용자에게 쾌적한 경험을 제공할 수 있습니다.
-                    </p>
-                    <h3>주요 특징</h3>
-                    <div class="mt-4" x-data="{ tab: 'prototype' }">
-                        <div class="flex border-b border-neutral-700 mb-4">
-                            <button @click="tab = 'prototype'" :class="{ 'text-white border-javascript': tab === 'prototype', 'text-neutral-500 border-transparent': tab !== 'prototype' }" class="py-2 px-4 font-bold border-b-2 transition">프로토타입 기반</button>
-                            <button @click="tab = 'firstclass'" :class="{ 'text-white border-javascript': tab === 'firstclass', 'text-neutral-500 border-transparent': tab !== 'firstclass' }" class="py-2 px-4 font-bold border-b-2 transition">일급 함수</button>
-                            <button @click="tab = 'dynamic'" :class="{ 'text-white border-javascript': tab === 'dynamic', 'text-neutral-500 border-transparent': tab !== 'dynamic' }" class="py-2 px-4 font-bold border-b-2 transition">동적 타이핑</button>
+                <!-- Content -->
+                <div class="md:col-span-3 mt-16 md:mt-0 space-y-24">
+                    <section id="react" class="scroll-mt-24" style="--tab-color: #61DAFB;">
+                        <h2 class="skill-title text-brand-react">REACT</h2>
+                        <p class="skill-text mt-4">사용자 인터페이스를 만들기 위한 선언적이고 효율적이며 유연한 JavaScript 라이브러리입니다. '컴포넌트'라는 작고 고립된 코드 조각을 사용하여 복잡한 UI를 구축할 수 있습니다.</p>
+                        <h3 class="skill-subtitle">핵심 컨셉: Virtual DOM</h3>
+                        <p class="skill-text">React는 실제 DOM의 가상 표현을 메모리에 유지하여, 상태 변경 시 이전 가상 DOM과 비교해 변경된 부분만 실제 DOM에 적용합니다. 이 '조정(reconciliation)' 과정은 DOM 조작을 최소화하여 애플리케이션의 성능을 크게 향상시킵니다.</p>
+                        <div class="mt-8" x-data="{ tab: 'component' }">
+                            <div class="flex flex-wrap border-b border-border-color mb-6">
+                                <button @click="tab = 'component'" :class="{ 'active': tab === 'component' }" class="tab-button">컴포넌트 기반</button>
+                                <button @click="tab = 'dataflow'" :class="{ 'active': tab === 'dataflow' }" class="tab-button">단방향 데이터 흐름</button>
+                                <button @click="tab = 'hooks'" :class="{ 'active': tab === 'hooks' }" class="tab-button">Hooks</button>
+                            </div>
+                            <div x-show="tab === 'component'" x-transition class="skill-text">UI를 재사용 가능한 독립적인 부분으로 나누어 개발 생산성과 유지보수성을 높입니다.</div>
+                            <div x-show="tab === 'dataflow'" x-transition class="skill-text">데이터가 부모에서 자식으로 단방향으로 흐르므로, 데이터 흐름을 예측하고 디버깅하기 쉽습니다.</div>
+                            <div x-show="tab === 'hooks'" x-transition class="skill-text">함수형 컴포넌트에서 상태(State)와 생명주기(Lifecycle) 기능을 사용하여 더 간결하고 직관적인 코드를 작성할 수 있습니다.</div>
                         </div>
-                        <div>
-                            <div x-show="tab === 'prototype'" x-transition class="normal-text">클래스 기반 언어와 달리 프로토타입을 통해 객체지향 상속을 구현합니다.</div>
-                            <div x-show="tab === 'firstclass'" x-transition class="normal-text">함수를 변수에 할당하거나 다른 함수의 인자로 전달하는 등 객체처럼 다룰 수 있어 함수형 프로그래밍이 가능합니다.</div>
-                            <div x-show="tab === 'dynamic'" x-transition class="normal-text">변수의 타입이 런타임에 결정되어 유연한 코드 작성이 가능합니다.</div>
-                        </div>
-                    </div>
-                </div>
+                    </section>
 
-                <!-- TypeScript -->
-                <div id="typescript" class="mb-24">
-                    <h2 class="medium-text" style="color: #3178C6;">TYPESCRIPT</h2>
-                    <p class="normal-text mt-4">
-                        JavaScript에 정적 타입 시스템을 추가한 상위 집합(Superset) 언어입니다. 대규모 애플리케이션에서 코드의 안정성과 유지보수성을 크게 향상시킵니다.
-                    </p>
-                    <h3>핵심 컨셉: 정적 타이핑</h3>
-                    <p class="normal-text">
-                        개발 단계에서 변수나 함수의 타입을 명시하여, 코드가 실행되기 전 컴파일 단계에서 타입 관련 오류를 미리 발견할 수 있습니다. 이는 런타임 에러를 줄이고, 코드의 의도를 명확하게 만들어 협업을 용이하게 합니다.
-                    </p>
-                    <h3>주요 특징</h3>
-                    <div class="mt-4" x-data="{ tab: 'inference' }">
-                        <div class="flex border-b border-neutral-700 mb-4">
-                            <button @click="tab = 'inference'" :class="{ 'text-white border-typescript': tab === 'inference', 'text-neutral-500 border-transparent': tab !== 'inference' }" class="py-2 px-4 font-bold border-b-2 transition">타입 추론</button>
-                            <button @click="tab = 'interface'" :class="{ 'text-white border-typescript': tab === 'interface', 'text-neutral-500 border-transparent': tab !== 'interface' }" class="py-2 px-4 font-bold border-b-2 transition">인터페이스와 제네릭</button>
-                            <button @click="tab = 'esnext'" :class="{ 'text-white border-typescript': tab === 'esnext', 'text-neutral-500 border-transparent': tab !== 'esnext' }" class="py-2 px-4 font-bold border-b-2 transition">최신 JS 기능 지원</button>
+                    <section id="javascript" class="scroll-mt-24" style="--tab-color: #F7DF1E;">
+                        <h2 class="skill-title text-yellow-500">JAVASCRIPT</h2>
+                        <p class="skill-text mt-4">웹 페이지에 생동감을 불어넣는 동적인 스크립팅 언어입니다. 현대 웹 개발의 핵심 기술로, 프론트엔드와 백엔드(Node.js) 모두에서 사용됩니다.</p>
+                        <h3 class="skill-subtitle">핵심 컨셉: 비동기 처리</h3>
+                        <p class="skill-text">JavaScript는 단일 스레드로 동작하지만, 이벤트 루프와 콜백, Promise, async/await를 통해 비동기 작업을 효율적으로 처리합니다. 이를 통해 네트워크 요청이나 대용량 파일 처리 중에도 UI가 멈추지 않고 사용자에게 쾌적한 경험을 제공할 수 있습니다.</p>
+                        <div class="mt-8" x-data="{ tab: 'prototype' }">
+                            <div class="flex flex-wrap border-b border-border-color mb-6">
+                                <button @click="tab = 'prototype'" :class="{ 'active': tab === 'prototype' }" class="tab-button">프로토타입 기반</button>
+                                <button @click="tab = 'firstclass'" :class="{ 'active': tab === 'firstclass' }" class="tab-button">일급 함수</button>
+                                <button @click="tab = 'dynamic'" :class="{ 'active': tab === 'dynamic' }" class="tab-button">동적 타이핑</button>
+                            </div>
+                            <div x-show="tab === 'prototype'" x-transition class="skill-text">클래스 기반 언어와 달리 프로토타입을 통해 객체지향 상속을 구현합니다.</div>
+                            <div x-show="tab === 'firstclass'" x-transition class="skill-text">함수를 변수에 할당하거나 다른 함수의 인자로 전달하는 등 객체처럼 다룰 수 있어 함수형 프로그래밍이 가능합니다.</div>
+                            <div x-show="tab === 'dynamic'" x-transition class="skill-text">변수의 타입이 런타임에 결정되어 유연한 코드 작성이 가능합니다.</div>
                         </div>
-                        <div>
-                            <div x-show="tab === 'inference'" x-transition class="normal-text">타입을 명시하지 않아도 컴파일러가 코드를 분석하여 자동으로 타입을 추론해 개발 편의성을 높입니다.</div>
-                            <div x-show="tab === 'interface'" x-transition class="normal-text">복잡한 객체 구조를 정의하고, 재사용 가능한 유연한 컴포넌트를 작성할 수 있습니다.</div>
-                            <div x-show="tab === 'esnext'" x-transition class="normal-text">최신 ECMAScript 표준을 지원하며, 이를 구형 브라우저에서도 동작하는 코드로 컴파일할 수 있습니다.</div>
-                        </div>
-                    </div>
-                </div>
+                    </section>
 
-                <!-- Figma -->
-                <div id="figma">
-                    <h2 class="medium-text" style="color: #0ACF83;">FIGMA</h2>
-                    <p class="normal-text mt-4">
-                        웹 기반의 실시간 협업 UI/UX 디자인 도구입니다. 아이디어 구상부터 프로토타이핑, 개발자 핸드오프까지 디자인 프로세스 전반을 지원합니다.
-                    </p>
-                    <h3>핵심 컨셉: 실시간 협업</h3>
-                    <p class="normal-text">
-                        여러 명의 디자이너, 기획자, 개발자가 하나의 파일에 동시에 접속하여 작업하고 피드백을 주고받을 수 있습니다. 이를 통해 커뮤니케이션 비용을 줄이고 디자인 작업의 효율성을 극대화합니다.
-                    </p>
-                    <h3>주요 특징</h3>
-                    <div class="mt-4" x-data="{ tab: 'component' }">
-                        <div class="flex border-b border-neutral-700 mb-4">
-                            <button @click="tab = 'component'" :class="{ 'text-white border-figma': tab === 'component', 'text-neutral-500 border-transparent': tab !== 'component' }" class="py-2 px-4 font-bold border-b-2 transition">컴포넌트와 스타일</button>
-                            <button @click="tab = 'autolayout'" :class="{ 'text-white border-figma': tab === 'autolayout', 'text-neutral-500 border-transparent': tab !== 'autolayout' }" class="py-2 px-4 font-bold border-b-2 transition">오토 레이아웃</button>
-                            <button @click="tab = 'prototyping'" :class="{ 'text-white border-figma': tab === 'prototyping', 'text-neutral-500 border-transparent': tab !== 'prototyping' }" class="py-2 px-4 font-bold border-b-2 transition">프로토타이핑</button>
+                    <section id="typescript" class="scroll-mt-24" style="--tab-color: #3178C6;">
+                        <h2 class="skill-title text-blue-600">TYPESCRIPT</h2>
+                        <p class="skill-text mt-4">JavaScript에 정적 타입 시스템을 추가한 상위 집합(Superset) 언어입니다. 대규모 애플리케이션에서 코드의 안정성과 유지보수성을 크게 향상시킵니다.</p>
+                        <h3 class="skill-subtitle">핵심 컨셉: 정적 타이핑</h3>
+                        <p class="skill-text">개발 단계에서 변수나 함수의 타입을 명시하여, 코드가 실행되기 전 컴파일 단계에서 타입 관련 오류를 미리 발견할 수 있습니다. 이는 런타임 에러를 줄이고, 코드의 의도를 명확하게 만들어 협업을 용이하게 합니다.</p>
+                        <div class="mt-8" x-data="{ tab: 'inference' }">
+                            <div class="flex flex-wrap border-b border-border-color mb-6">
+                                <button @click="tab = 'inference'" :class="{ 'active': tab === 'inference' }" class="tab-button">타입 추론</button>
+                                <button @click="tab = 'interface'" :class="{ 'active': tab === 'interface' }" class="tab-button">인터페이스와 제네릭</button>
+                                <button @click="tab = 'esnext'" :class="{ 'active': tab === 'esnext' }" class="tab-button">최신 JS 기능 지원</button>
+                            </div>
+                            <div x-show="tab === 'inference'" x-transition class="skill-text">타입을 명시하지 않아도 컴파일러가 코드를 분석하여 자동으로 타입을 추론해 개발 편의성을 높입니다.</div>
+                            <div x-show="tab === 'interface'" x-transition class="skill-text">복잡한 객체 구조를 정의하고, 재사용 가능한 유연한 컴포넌트를 작성할 수 있습니다.</div>
+                            <div x-show="tab === 'esnext'" x-transition class="skill-text">최신 ECMAScript 표준을 지원하며, 이를 구형 브라우저에서도 동작하는 코드로 컴파일할 수 있습니다.</div>
                         </div>
-                        <div>
-                            <div x-show="tab === 'component'" x-transition class="normal-text">재사용 가능한 UI 요소와 스타일을 시스템으로 관리하여 디자인의 일관성을 유지합니다.</div>
-                            <div x-show="tab === 'autolayout'" x-transition class="normal-text">콘텐츠 변화에 따라 자동으로 레이아웃을 조정하여 반응형 디자인을 쉽게 구현할 수 있습니다.</div>
-                            <div x-show="tab === 'prototyping'" x-transition class="normal-text">별도의 툴 없이 인터랙티브한 프로토타입을 제작하여 사용자 흐름을 테스트하고 아이디어를 검증할 수 있습니다.</div>
+                    </section>
+
+                    <section id="figma" class="scroll-mt-24" style="--tab-color: #0ACF83;">
+                        <h2 class="skill-title text-green-500">FIGMA</h2>
+                        <p class="skill-text mt-4">웹 기반의 실시간 협업 UI/UX 디자인 도구입니다. 아이디어 구상부터 프로토타이핑, 개발자 핸드오프까지 디자인 프로세스 전반을 지원합니다.</p>
+                        <h3 class="skill-subtitle">핵심 컨셉: 실시간 협업</h3>
+                        <p class="skill-text">여러 명의 디자이너, 기획자, 개발자가 하나의 파일에 동시에 접속하여 작업하고 피드백을 주고받을 수 있습니다. 이를 통해 커뮤니케이션 비용을 줄이고 디자인 작업의 효율성을 극대화합니다.</p>
+                        <div class="mt-8" x-data="{ tab: 'component' }">
+                            <div class="flex flex-wrap border-b border-border-color mb-6">
+                                <button @click="tab = 'component'" :class="{ 'active': tab === 'component' }" class="tab-button">컴포넌트와 스타일</button>
+                                <button @click="tab = 'autolayout'" :class="{ 'active': tab === 'autolayout' }" class="tab-button">오토 레이아웃</button>
+                                <button @click="tab = 'prototyping'" :class="{ 'active': tab === 'prototyping' }" class="tab-button">프로토타이핑</button>
+                            </div>
+                            <div x-show="tab === 'component'" x-transition class="skill-text">재사용 가능한 UI 요소와 스타일을 시스템으로 관리하여 디자인의 일관성을 유지합니다.</div>
+                            <div x-show="tab === 'autolayout'" x-transition class="skill-text">콘텐츠 변화에 따라 자동으로 레이아웃을 조정하여 반응형 디자인을 쉽게 구현할 수 있습니다.</div>
+                            <div x-show="tab === 'prototyping'" x-transition class="skill-text">별도의 툴 없이 인터랙티브한 프로토타입을 제작하여 사용자 흐름을 테스트하고 아이디어를 검증할 수 있습니다.</div>
                         </div>
-                    </div>
+                    </section>
                 </div>
             </div>
-        </div>
+        </section>
     </main>
+
+    <!-- ===== FOOTER ===== -->
+    <footer class="bg-section-bg border-t border-border-color py-8 mt-24">
+        <div class="container mx-auto px-4 md:px-6 text-center text-text-secondary text-sm">
+             <div class="flex justify-center items-center gap-x-6 mb-4">
+                <a href="/" class="hover:text-text-primary">Home</a>
+                <a href="/#project" class="hover:text-text-primary">Projects</a>
+                <a href="/#contact" class="hover:text-text-primary">Contact</a>
+            </div>
+            <p>&copy; 2024 Noh TaeKyung. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Active side navigation on scroll
+        document.addEventListener('DOMContentLoaded', () => {
+            const navLinks = document.querySelectorAll('#side-nav a');
+            const sections = document.querySelectorAll('#skills-detailed section');
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        navLinks.forEach(link => {
+                            const href = link.getAttribute('href');
+                            link.classList.toggle('active', href === `#${entry.target.id}`);
+                        });
+                    }
+                });
+            }, { rootMargin: '-40% 0px -60% 0px' });
+
+            sections.forEach(section => {
+                observer.observe(section);
+            });
+        });
+    </script>
 
 </body>
 </html>
