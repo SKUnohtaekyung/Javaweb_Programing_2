@@ -55,7 +55,7 @@
                     <li><a href="#project" class="nav-link text-text-primary hover:text-brand-green font-medium px-3 py-2 transition-colors duration-300">PROJECT</a></li>
                     <li><a href="#skills" class="nav-link text-text-primary hover:text-brand-green font-medium px-3 py-2 transition-colors duration-300">SKILLS</a></li>
                     <li><a href="#team" class="nav-link text-text-primary hover:text-brand-green font-medium px-3 py-2 transition-colors duration-300">TEAM</a></li>
-                    <li><a href="/article_list" class="nav-link text-text-primary hover:text-brand-green font-medium px-3 py-2 transition-colors duration-300">BOARD</a></li>
+                    <li><a href="#board" class="nav-link text-text-primary hover:text-brand-green font-medium px-3 py-2 transition-colors duration-300">BOARD</a></li>
                     <li><a href="#contact" class="nav-link text-text-primary hover:text-brand-green font-medium px-3 py-2 transition-colors duration-300">CONTACT</a></li>
                 </ul>
                 <button id="nav-close" class="absolute top-6 right-6 text-2xl md:hidden">
@@ -312,30 +312,31 @@
             <div class="container mx-auto px-4 md:px-6 text-center">
                 <h2 class="text-3xl font-bold text-text-primary text-center tracking-tight">BOARD</h2>
                 <p class="text-base text-text-secondary text-center mb-12">프로젝트 관련 소식을 확인하세요.</p>
-                <div class="max-w-4xl mx-auto mt-12 text-left bg-white border border-border-color rounded-lg hover:shadow-brand transition-shadow duration-300">
+                
+                <!-- Article Preview List -->
+                <div class="max-w-4xl mx-auto mt-12 text-left bg-white border border-border-color rounded-lg shadow-md">
+                    <!-- Board Header -->
                     <div class="grid grid-cols-12 p-4 border-b border-border-color font-bold text-text-secondary bg-gray-50 rounded-t-lg">
                         <div class="col-span-1 hidden sm:block">번호</div>
-                        <div class="col-span-2 hidden sm:block">작성자</div>
-                        <div class="col-span-8 sm:col-span-7">제목</div>
-                        <div class="col-span-4 sm:col-span-2 text-right">날짜</div>
+                        <div class="col-span-11 sm:col-span-11">제목</div>
                     </div>
-                    <a href="#" class="grid grid-cols-12 p-4 border-b border-border-color items-center hover:bg-gray-50 transition-colors duration-200">
-                        <div class="col-span-1 hidden sm:block text-text-secondary">3</div>
-                        <div class="col-span-2 hidden sm:block text-text-secondary">노태경</div>
-                        <div class="col-span-8 sm:col-span-7 text-text-primary font-medium">새로운 프로젝트를 시작합니다.</div>
-                        <div class="col-span-4 sm:col-span-2 text-text-secondary text-right text-sm">2025-09-24</div>
-                    </a>
-                    <a href="#" class="grid grid-cols-12 p-4 border-b border-border-color items-center hover:bg-gray-50 transition-colors duration-200">
-                        <div class="col-span-1 hidden sm:block text-text-secondary">2</div>
-                        <div class="col-span-2 hidden sm:block text-text-secondary">노태경</div>
-                        <div class="col-span-8 sm:col-span-7 text-text-primary font-medium">포트폴리오 웹사이트 리뉴얼 안내</div>
-                        <div class="col-span-4 sm:col-span-2 text-text-secondary text-right text-sm">2025-09-15</div>
-                    </a>
-                    <a href="#" class="grid grid-cols-12 p-4 items-center hover:bg-gray-50 transition-colors duration-200 rounded-b-lg">
-                        <div class="col-span-1 hidden sm:block text-text-secondary">1</div>
-                        <div class="col-span-2 hidden sm:block text-text-secondary">노태경</div>
-                        <div class="col-span-8 sm:col-span-7 text-text-primary font-medium">노태경의 포트폴리오에 오신 것을 환영합니다!</div>
-                        <div class="col-span-4 sm:col-span-2 text-text-secondary text-right text-sm">2025-09-01</div>
+                    <!-- Board Items -->
+                    <div th:if="${!articles.isEmpty()}">
+                        <a th:each="article, stat : ${articles}" th:if="${stat.index < 3}" href="#" class="view-article-btn grid grid-cols-12 p-4 border-b border-border-color items-center hover:bg-gray-50 transition-colors duration-200 cursor-pointer" th:data-id="${article.id}">
+                            <div class="col-span-1 hidden sm:block text-text-secondary" th:text="${article.id}"></div>
+                            <div class="col-span-11 sm:col-span-11 text-text-primary font-medium" th:text="${article.title}"></div>
+                        </a>
+                    </div>
+                    <!-- If no articles -->
+                    <div th:if="${articles.isEmpty()}" class="p-8 text-center text-gray-500">
+                        <p>아직 게시된 글이 없습니다.</p>
+                    </div>
+                </div>
+
+                <!-- Go to Board Button -->
+                <div class="mt-12">
+                    <a href="/article_list" class="bg-sky-500 text-white font-bold py-3 px-8 rounded-lg hover:bg-sky-600 transition-colors duration-300">
+                        게시판 바로가기
                     </a>
                 </div>
             </div>
@@ -390,6 +391,17 @@
         </section>
     </main>
 
+    <!-- Article View Modal -->
+    <div id="article-modal" class="fixed inset-0 bg-black bg-opacity-70 z-50 hidden items-center justify-center p-4">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-full overflow-y-auto p-8">
+            <div class="flex justify-between items-center border-b pb-3 mb-5">
+                <h2 id="modal-title" class="text-2xl font-bold"></h2>
+                <button id="modal-close-btn" class="text-gray-500 hover:text-gray-800 text-2xl">&times;</button>
+            </div>
+            <div id="modal-content" class="prose max-w-none"></div>
+        </div>
+    </div>
+
     <footer class="bg-white border-t border-border-color py-8">
         <div class="container mx-auto px-4 md:px-6 text-center text-text-secondary text-sm">
              <div class="flex justify-center items-center gap-x-6 mb-4">
@@ -408,6 +420,44 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             /* All the JS functions */
+            /*===== Article Modal Logic ===== */
+            const modal = document.getElementById('article-modal');
+            if (modal) {
+                const modalTitle = document.getElementById('modal-title');
+                const modalContent = document.getElementById('modal-content');
+                const modalCloseBtn = document.getElementById('modal-close-btn');
+
+                document.querySelectorAll('.view-article-btn').forEach(button => {
+                    button.addEventListener('click', async (e) => {
+                        e.preventDefault();
+                        const articleId = button.dataset.id;
+                        
+                        try {
+                            const response = await fetch(`/api/articles/${articleId}`);
+                            if (!response.ok) throw new Error('Network response was not ok.');
+                            const article = await response.json();
+                            
+                            modalTitle.textContent = article.title;
+                            modalContent.textContent = article.content;
+                            modal.classList.remove('hidden');
+                            modal.classList.add('flex');
+                        } catch (error) {
+                            console.error('Failed to fetch article:', error);
+                            alert('게시글을 불러오는 데 실패했습니다.');
+                        }
+                    });
+                });
+
+                const closeModal = () => {
+                    modal.classList.add('hidden');
+                    modal.classList.remove('flex');
+                };
+
+                if(modalCloseBtn) modalCloseBtn.addEventListener('click', closeModal);
+                modal.addEventListener('click', (e) => {
+                    if (e.target === modal) closeModal();
+                });
+            }
         });
     </script>
 </body>
