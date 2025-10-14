@@ -1,17 +1,22 @@
 package com.example.jar.controller;
 
+import com.example.jar.model.domain.Article;
 import com.example.jar.model.domain.TestDB;
+import com.example.jar.model.service.BlogService;
 import com.example.jar.model.service.TestService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
+import java.util.List;
+
 @Controller
 @RequiredArgsConstructor
 public class DemoController {
 
     private final TestService testService;
+    private final BlogService blogService;
 
     @GetMapping("/hello1004")
     public String hello(Model model) {
@@ -25,7 +30,9 @@ public class DemoController {
     }
 
     @GetMapping("/")
-    public String index() {
+    public String index(Model model) {
+        List<Article> articles = blogService.findAll();
+        model.addAttribute("articles", articles);
         return "index";
     }
 

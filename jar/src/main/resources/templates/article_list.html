@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>게시판 | Noh TaeKyung</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+    <style>
+        :root {
+            --bg-dark: #0D1117;
+            --text-primary: #E6EDF3;
+            --text-secondary: #8B949E;
+            --accent-blue: #58A6FF;
+            --card-bg: rgba(22, 27, 34, 0.6);
+            --card-border: rgba(255, 255, 255, 0.15);
+            --card-hover-border: rgba(88, 166, 255, 0.5);
+        }
+        body {
+            font-family: 'Pretendard', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-primary);
+            position: relative;
+            overflow-x: hidden;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(180deg, var(--bg-dark) 0%, #010409 100%);
+            z-index: -2;
+        }
+        body::after {
+            content: '';
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            width: 100vw;
+            height: 100vh;
+            transform: translate(-50%, -50%);
+            background: radial-gradient(circle, var(--accent-blue), transparent 40%);
+            filter: blur(150px);
+            opacity: 0.1;
+            z-index: -1;
+            animation: subtle-glow 40s ease-in-out infinite alternate;
+        }
+        @keyframes subtle-glow {
+            from { transform: translate(-50%, -50%) scale(0.8) rotate(0deg); }
+            to { transform: translate(-40%, -40%) scale(1.2) rotate(15deg); }
+        }
+        .glass-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            transition: all 0.3s ease;
+        }
+        .glass-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4);
+            border-color: var(--card-hover-border);
+        }
+        .modal-backdrop {
+            background-color: rgba(0,0,0,0.7);
+            backdrop-filter: blur(8px);
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <div class="relative z-10 min-h-screen p-6 sm:p-8 lg:p-12">
+        <header class="flex justify-between items-center mb-16 md:mb-24">
+            <a href="/#board" class="text-lg font-bold transition-colors hover:text-sky-400 flex items-center gap-2">
+                <i class="fa-solid fa-arrow-left"></i>
+                Back to Main
+            </a>
+        </header>
+
+        <main class="container mx-auto max-w-6xl">
+            
+            <!-- 게시글 목록 -->
+            <section id="article-list-section">
+                <h1 class="text-4xl md:text-5xl font-bold mb-12 text-center">게시글 목록</h1>
+                <div id="article-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <!-- 게시글이 없을 경우 -->
+                    <div id="no-articles-message" th:if="${articles.isEmpty()}" class="col-span-full glass-card rounded-2xl p-8 text-center">
+                        <p class="text-text-secondary">아직 게시된 글이 없습니다. 첫 번째 글을 작성해보세요!</p>
+                    </div>
+                    
+                    <!-- 게시글 반복 -->
+                    <div th:each="article : ${articles}" th:id="'article-' + ${article.id}" class="glass-card rounded-2xl flex flex-col group">
+                        <div class="p-8 flex-grow">
+                            <h3 class="text-xl font-bold mb-3" th:text="${article.title}">게시글 제목</h3>
+                            <p class="text-text-secondary leading-relaxed line-clamp-3" th:text="${article.content}">게시글 내용...</p>
+                        </div>
+                        <div class="p-4 bg-black/20 rounded-b-2xl flex justify-end items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                            <button th:data-id="${article.id}" class="edit-btn text-sm text-sky-400 hover:text-white transition-colors">수정</button>
+                            <button th:data-id="${article.id}" class="delete-btn text-sm text-red-500 hover:text-white transition-colors">삭제</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 게시글 추가 폼 -->
+            <section id="add-article-section" class="mt-24">
+                <div class="glass-card rounded-2xl p-8 max-w-3xl mx-auto">
+                    <h2 class="text-2xl font-bold mb-6">새로운 글 작성</h2>
+                    <form id="add-article-form">
+                        <div class="mb-4">
+                            <label for="title" class="block text-sm font-medium text-text-secondary mb-2">제목</label>
+                            <input type="text" id="title" name="title" required class="w-full bg-gray-900/50 border border-gray-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-sky-500 transition">
+                        </div>
+                        <div class="mb-6">
+                            <label for="content" class="block text-sm font-medium text-text-secondary mb-2">내용</label>
+                            <textarea id="content" name="content" rows="5" required class="w-full bg-gray-900/50 border border-gray-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-sky-500 transition"></textarea>
+                        </div>
+                        <div class="text-right">
+                            <button type="submit" class="bg-sky-500 text-white font-bold py-2 px-6 rounded-lg hover:bg-sky-600 transition-colors duration-300">글 추가하기</button>
+                        </div>
+                    </form>
+                </div>
+            </section>
+        </main>
+        
+        <footer class="text-center mt-24 md:mt-32 p-4">
+            <p class="text-xs text-gray-600">© 2025 Noh TaeKyung. All Rights Reserved.</p>
+        </footer>
+    </div>
+
+    <!-- Edit Modal -->
+    <div id="edit-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 modal-backdrop">
+        <div class="glass-card rounded-2xl w-full max-w-2xl shadow-2xl">
+            <form id="edit-article-form" class="p-8">
+                <h2 class="text-2xl font-bold mb-6">게시글 수정</h2>
+                <input type="hidden" id="edit-id" name="id">
+                <div class="mb-4">
+                    <label for="edit-title" class="block text-sm font-medium text-text-secondary mb-2">제목</label>
+                    <input type="text" id="edit-title" name="title" required class="w-full bg-gray-900/50 border border-gray-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-sky-500 transition">
+                </div>
+                <div class="mb-6">
+                    <label for="edit-content" class="block text-sm font-medium text-text-secondary mb-2">내용</label>
+                    <textarea id="edit-content" name="content" rows="8" required class="w-full bg-gray-900/50 border border-gray-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-sky-500 transition"></textarea>
+                </div>
+                <div class="flex justify-end gap-4">
+                    <button type="button" id="cancel-edit-btn" class="bg-gray-700/50 text-white font-bold py-2 px-6 rounded-lg hover:bg-gray-600/50 transition-colors">취소</button>
+                    <button type="submit" class="bg-sky-500 text-white font-bold py-2 px-6 rounded-lg hover:bg-sky-600 transition-colors">저장</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const articleGrid = document.getElementById('article-grid');
+        const addArticleForm = document.getElementById('add-article-form');
+        
+        // Edit Modal Elements
+        const editModal = document.getElementById('edit-modal');
+        const editForm = document.getElementById('edit-article-form');
+        const cancelEditBtn = document.getElementById('cancel-edit-btn');
+
+        // --- Event Listeners ---
+
+        // Add Article Form Submission
+        addArticleForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(addArticleForm);
+            const response = await fetch('/api/articles', {
+                method: 'POST',
+                body: new URLSearchParams(formData)
+            });
+
+            if (response.ok && response.redirected) {
+                window.location.href = response.url;
+            } else {
+                alert('게시글 추가에 실패했습니다.');
+            }
+        });
+
+        // Edit/Delete Button Clicks (using event delegation)
+        articleGrid.addEventListener('click', async (e) => {
+            const target = e.target;
+            const articleId = target.dataset.id;
+
+            if (target.classList.contains('delete-btn')) {
+                if (!confirm('정말로 이 게시글을 삭제하시겠습니까?')) return;
+
+                const response = await fetch(`/api/articles/${articleId}`, { method: 'DELETE' });
+                if (response.ok) {
+                    document.getElementById(`article-${articleId}`).remove();
+                } else {
+                    alert('삭제에 실패했습니다.');
+                }
+            }
+
+            if (target.classList.contains('edit-btn')) {
+                const response = await fetch(`/api/articles/${articleId}`);
+                const article = await response.json();
+                
+                editForm.querySelector('#edit-id').value = article.id;
+                editForm.querySelector('#edit-title').value = article.title;
+                editForm.querySelector('#edit-content').value = article.content;
+                
+                editModal.classList.remove('hidden');
+                editModal.classList.add('flex');
+            }
+        });
+
+        // Edit Modal Form Submission
+        editForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const articleId = editForm.querySelector('#edit-id').value;
+            const title = editForm.querySelector('#edit-title').value;
+            const content = editForm.querySelector('#edit-content').value;
+
+            const response = await fetch(`/api/articles/${articleId}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ title, content })
+            });
+
+            if (response.ok) {
+                const updatedArticle = await response.json();
+                const articleCard = document.querySelector(`#article-${articleId}`);
+                articleCard.querySelector('h3').textContent = updatedArticle.title;
+                articleCard.querySelector('p').textContent = updatedArticle.content;
+                closeEditModal();
+            } else {
+                alert('수정에 실패했습니다.');
+            }
+        });
+
+        // Close Edit Modal
+        const closeEditModal = () => {
+            editModal.classList.add('hidden');
+            editModal.classList.remove('flex');
+        };
+        cancelEditBtn.addEventListener('click', closeEditModal);
+        editModal.addEventListener('click', (e) => {
+            if (e.target === editModal) closeEditModal();
+        });
+    });
+    </script>
+</body>
+</html>
