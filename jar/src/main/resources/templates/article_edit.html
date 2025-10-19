@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<!-- Thymeleaf 네임스페이스를 사용하여 서버 사이드 렌더링 기능 활성화 -->
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Archive | Edit Article</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts (Pretendard) -->
+    <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+    <!-- 페이지 스타일: 기존 article_list.html의 스타일을 재사용하여 디자인 일관성 유지 -->
+    <style>
+        :root {
+            --bg-dark: #020617;
+            --text-primary: #E2E8F0;
+            --text-secondary: #94A3B8;
+            --accent-cyan: #0e7490;
+            --accent-blue-deep: #00145d57;
+            --accent-blue-sky: #00203272;
+            --card-bg: rgba(15, 23, 42, 0.65);
+            --card-border: rgba(255, 255, 255, 0.1);
+            --glow-color: rgba(34, 211, 238, 0.4);
+        }
+        body {
+            font-family: 'Pretendard', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-primary);
+            position: relative;
+            overflow-x: hidden;
+        }
+        .background-shapes {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -1; overflow: hidden;
+        }
+        .shape {
+            position: absolute; border-radius: 50%; opacity: 0.5; mix-blend-mode: screen; filter: blur(70px); will-change: transform;
+        }
+        .shape-1 {
+            width: 40vmax; height: 40vmax; background-color: var(--accent-cyan); top: -10vh; left: -10vw; animation: move-shape-1 25s infinite alternate ease-in-out;
+        }
+        .shape-2 {
+            width: 50vmax; height: 50vmax; background-color: var(--accent-blue-deep); bottom: -20vh; right: -15vw; animation: move-shape-2 30s infinite alternate ease-in-out -8s;
+        }
+        .shape-3 {
+            width: 35vmax; height: 35vmax; background-color: var(--accent-blue-sky); bottom: 25vh; left: 5vw; animation: move-shape-3 22s infinite alternate ease-in-out -15s;
+        }
+        @keyframes move-shape-1 { from { transform: translate(0, 0) rotate(0deg) scale(1.1); } to { transform: translate(15vw, 10vh) rotate(45deg) scale(1); } }
+        @keyframes move-shape-2 { from { transform: translate(0, 0) rotate(0deg) scale(1); } to { transform: translate(-20vw, -15vh) rotate(-30deg) scale(1.2); } }
+        @keyframes move-shape-3 { from { transform: translate(0, 0) rotate(0deg) scale(0.9); } to { transform: translate(10vw, -5vh) rotate(60deg) scale(1.1); } }
+        .glass-card {
+            background: var(--card-bg); border: 1px solid var(--card-border); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+        .glass-input {
+            background: rgba(255, 255, 255, 0.05); border: 1px solid var(--card-border); transition: all 0.2s ease-in-out;
+        }
+        .glass-input:focus {
+            outline: none; border-color: var(--accent-cyan); box-shadow: 0 0 15px var(--glow-color); background: rgba(255, 255, 255, 0.08);
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- 배경 애니메이션 -->
+    <div class="background-shapes" aria-hidden="true">
+        <div class="shape shape-1"></div>
+        <div class="shape shape-2"></div>
+        <div class="shape shape-3"></div>
+    </div>
+
+    <div class="relative z-10 min-h-screen flex items-center justify-center p-4 sm:p-6 lg:p-8">
+        <div class="w-full max-w-2xl">
+            <!-- 수정 폼 섹션 -->
+            <section id="edit-article-section">
+                <div class="glass-card rounded-2xl p-6 md:p-8">
+                    <!-- 폼 제목 -->
+                    <h2 class="text-2xl font-bold mb-6 flex items-center gap-3"><i class="fa-solid fa-pen-to-square text-cyan-400"></i> 게시글 수정</h2>
+                    
+                    <!-- 게시글 수정 폼 -->
+                    <!-- th:object를 사용하여 폼이 'article' 객체와 바인딩됨을 선언 -->
+                    <!-- th:action을 통해 폼 제출 시 PUT 요청을 보낼 URL을 동적으로 생성 -->
+                    <form th:action="@{/api/articles/update/{id}(id=${article.id})}" th:object="${updateRequest}" method="post" class="space-y-4">
+                        
+                        <div>
+                            <label for="title" class="block text-sm font-medium text-text-secondary mb-1.5">제목</label>
+                            <!-- th:field="*{title}"을 사용하여 article 객체의 title 필드와 입력값을 바인딩 -->
+                            <input type="text" id="title" th:field="*{title}" required class="glass-input w-full rounded-lg px-4 py-2.5 text-white placeholder:text-slate-500">
+                        </div>
+                        <div>
+                            <label for="content" class="block text-sm font-medium text-text-secondary mb-1.5">내용</label>
+                            <!-- th:field="*{content}"를 사용하여 article 객체의 content 필드와 입력값을 바인딩 -->
+                            <textarea id="content" th:field="*{content}" rows="8" required class="glass-input w-full rounded-lg px-4 py-2.5 text-white placeholder:text-slate-500"></textarea>
+                        </div>
+                        <div class="pt-4 flex items-center justify-between gap-4">
+                            <!-- 목록으로 돌아가는 버튼 -->
+                            <a th:href="@{/article_list}" class="w-1/2 text-center bg-white/10 text-white font-bold py-3 px-6 rounded-lg hover:bg-white/20 transition-colors">
+                                <i class="fa-solid fa-list mr-2"></i> 목록으로
+                            </a>
+                            <!-- 폼 제출(수정) 버튼 -->
+                            <button type="submit" class="w-1/2 bg-gradient-to-r from-cyan-500 to-blue-500 text-white font-bold py-3 px-6 rounded-lg transition-all duration-300 hover:shadow-[0_0_20px_var(--glow-color)] hover:scale-105">
+                                <i class="fa-solid fa-check mr-2"></i> 수정하기
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </section>
+        </div>
+    </div>
+
+</body>
+</html>

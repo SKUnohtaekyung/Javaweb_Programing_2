@@ -3,7 +3,6 @@ package com.example.jar.controller;
 import com.example.jar.model.domain.Article;
 import com.example.jar.model.service.AddArticleRequest;
 import com.example.jar.model.service.BlogService;
-import com.example.jar.model.service.UpdateArticleRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +18,7 @@ public class BlogRestController {
 
     @PostMapping("/api/articles")
     public ResponseEntity<Void> addArticle(@ModelAttribute AddArticleRequest request) {
-        Article savedArticle = blogService.save(request);
+        blogService.save(request);
         return ResponseEntity.status(HttpStatus.FOUND)
                 .location(URI.create("/article_list"))
                 .build();
@@ -37,9 +36,4 @@ public class BlogRestController {
         return ResponseEntity.ok().build();
     }
 
-    @PutMapping("/api/articles/{id}")
-    public ResponseEntity<Article> updateArticle(@PathVariable long id, @RequestBody UpdateArticleRequest request) {
-        Article updatedArticle = blogService.update(id, request);
-        return ResponseEntity.ok(updatedArticle);
-    }
 }
