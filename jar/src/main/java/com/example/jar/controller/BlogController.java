@@ -19,11 +19,12 @@ public class BlogController {
 
     private final BlogService blogService;
 
-    @GetMapping("/article_list")
+    // Moved /article_list to BoardController for Board-based list with pagination/search
+    // Keep an alternate endpoint if needed for legacy Article list
+    @GetMapping("/article_list_articles")
     public String getArticles(Model model) {
         List<Article> articles = blogService.findAll();
         model.addAttribute("articles", articles);
-
         return "article_list";
     }
 

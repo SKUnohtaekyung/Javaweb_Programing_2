@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>로그인 | TK</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Noto Sans KR', sans-serif; }
+    </style>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white">
+<div class="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(56,189,248,0.15),_transparent_35%),_radial-gradient(circle_at_bottom_right,_rgba(14,165,233,0.15),_transparent_35%)] pointer-events-none"></div>
+
+<header class="max-w-5xl mx-auto px-6 pt-8 flex items-center justify-between relative z-10">
+    <a href="/" class="text-2xl font-black tracking-tight">TK</a>
+    <div class="flex items-center gap-3 text-sm">
+        <a href="/member_login" class="whitespace-nowrap text-slate-200 hover:text-sky-200 transition-colors">로그인</a>
+        <a href="/join_new" class="whitespace-nowrap bg-sky-500 text-white font-semibold py-2 px-4 rounded-full shadow-lg shadow-sky-500/30 hover:bg-sky-400 transition">회원가입</a>
+    </div>
+</header>
+
+<main class="relative z-10">
+    <div class="max-w-5xl mx-auto px-6 pt-12 pb-20 grid lg:grid-cols-2 gap-10 items-center">
+        <div class="space-y-4">
+            <p class="text-sky-300 font-semibold">Welcome Back</p>
+            <h1 class="text-4xl md:text-5xl font-black leading-tight">보드와 블로그를 계속 이어서<br>사용해 보세요.</h1>
+            <p class="text-slate-200 leading-relaxed">저장된 게시글과 팀 정보를 안전하게 불러옵니다. 빠른 로그인 경험을 위해 간결한 입력과 명확한 피드백을 제공합니다.</p>
+            <div class="flex items-center gap-3 text-slate-300 text-sm">
+                <span class="inline-flex items-center gap-2 bg-white/5 px-3 py-2 rounded-full border border-white/10 cursor-pointer">⚡ 빠른 진입</span>
+                <span class="inline-flex items-center gap-2 bg-white/5 px-3 py-2 rounded-full border border-white/10 cursor-pointer">🧩 보드/블로그 연동</span>
+            </div>
+        </div>
+
+        <div class="bg-white text-slate-900 rounded-2xl shadow-2xl shadow-sky-500/20 p-8">
+            <div class="flex items-center justify-between mb-6">
+                <div>
+                    <p class="text-slate-500 text-sm">Sign in</p>
+                    <h2 class="text-2xl font-bold whitespace-nowrap">로그인</h2>
+                </div>
+                <a href="/join_new" class="text-sm text-sky-600 hover:text-sky-500 font-medium">아직 계정이 없나요?</a>
+            </div>
+
+            <div th:if="${errorMessage}" class="mb-4 rounded-xl bg-red-50 text-red-700 px-4 py-3 text-sm" th:text="${errorMessage}"></div>
+
+            <form th:action="@{/api/login_check}" method="post" class="space-y-4">
+                <div>
+                    <label class="text-sm text-slate-600 font-semibold">이메일</label>
+                    <input type="email" name="email" th:value="${email}" required class="mt-2 w-full rounded-xl border border-slate-200 px-4 py-3 focus:ring-2 focus:ring-sky-400 focus:outline-none">
+                </div>
+                <div>
+                    <label class="text-sm text-slate-600 font-semibold">비밀번호</label>
+                    <input type="password" name="password" required class="mt-2 w-full rounded-xl border border-slate-200 px-4 py-3 focus:ring-2 focus:ring-sky-400 focus:outline-none">
+                </div>
+                <div class="flex items-center justify-between text-sm text-slate-600">
+                    <label class="inline-flex items-center gap-2">
+                        <input type="checkbox" name="remember" class="rounded border-slate-300 text-sky-500 focus:ring-sky-400">
+                        로그인 상태 유지
+                    </label>
+                    <span class="text-slate-400">공용 PC에서는 해제해 주세요.</span>
+                </div>
+                <button type="submit" class="w-full bg-sky-500 text-white font-semibold py-3 rounded-xl mt-2 hover:bg-sky-400 transition shadow-lg shadow-sky-500/30">로그인</button>
+            </form>
+        </div>
+    </div>
+</main>
+</body>
+</html>

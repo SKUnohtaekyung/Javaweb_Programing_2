@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>Board List</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+</head>
+<body>
+  <h1>Board List</h1>
+
+  <!-- Search form -->
+  <section>
+    <form th:action="@{/board_list}" method="get">
+      <input type="text" name="keyword" placeholder="검색어" th:value="${keyword}" />
+      <button type="submit">검색</button>
+    </form>
+  </section>
+
+  <section>
+    <h2>Add Board</h2>
+    <form th:action="@{/api/boards}" method="post">
+      <div>
+        <input type="text" name="title" placeholder="title" required />
+      </div>
+      <div>
+        <input type="text" name="user" placeholder="user" required />
+      </div>
+      <div>
+        <input type="text" name="newdate" placeholder="newdate" required />
+      </div>
+      <div>
+        <input type="text" name="count" placeholder="count" required />
+      </div>
+      <div>
+        <input type="text" name="likec" placeholder="likec" required />
+      </div>
+      <div>
+        <textarea name="content" placeholder="content" rows="6" required></textarea>
+      </div>
+      <button type="submit">Add</button>
+    </form>
+  </section>
+
+  <section>
+    <h2>Boards</h2>
+    <div th:if="${#lists.isEmpty(boards.content)}">No boards</div>
+    <ul>
+      <li th:each="board : ${boards.content}">
+        <a th:href="@{/board_view/{id}(id=${board.id})}" th:text="${board.title}">title</a>
+        <span> - </span>
+        <span th:text="${board.user}">user</span>
+      </li>
+    </ul>
+  </section>
+
+  <!-- Pagination -->
+  <section>
+    <ul>
+      <li>
+        <a th:href="@{/board_list(page=${currentPage - 1}, keyword=${keyword})}" th:classappend="${currentPage == 0} ? 'disabled'">
+          이전
+        </a>
+      </li>
+      <li th:if="${totalPages > 0}" th:each="i : ${#numbers.sequence(0, totalPages - 1)}">
+        <a th:href="@{/board_list(page=${i}, keyword=${keyword})}" th:text="${i + 1}" th:classappend="${i == currentPage} ? 'active'">1</a>
+      </li>
+      <li>
+        <a th:href="@{/board_list(page=${currentPage + 1}, keyword=${keyword})}" th:classappend="${currentPage + 1 >= totalPages} ? 'disabled'">
+          다음
+        </a>
+      </li>
+    </ul>
+  </section>
+
+  <p><a th:href="@{/}">Home</a></p>
+</body>
+</html>

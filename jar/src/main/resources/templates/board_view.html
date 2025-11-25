@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>Board View</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+</head>
+<body>
+  <h1 th:text="${board.title}">title</h1>
+
+  <p><strong>User:</strong> <span th:text="${board.author}"></span></p>
+  <p><strong>Date:</strong> <span th:text="${#temporals.format(board.createdAt, 'yyyy-MM-dd HH:mm')}"></span></p>
+  <p><strong>Count:</strong> <span th:text="${board.viewCount}"></span></p>
+  <p><strong>Like:</strong> <span th:text="${board.likeCount}"></span></p>
+  <pre th:text="${board.content}"></pre>
+
+  <p><a th:href="@{/board_list}">Back to list</a></p>
+</body>
+</html>

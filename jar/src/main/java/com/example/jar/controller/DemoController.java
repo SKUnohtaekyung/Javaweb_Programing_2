@@ -1,8 +1,9 @@
 package com.example.jar.controller;
 
-import com.example.jar.model.domain.Article;
+import com.example.jar.model.domain.Board;
 import com.example.jar.model.domain.TestDB;
 import com.example.jar.model.service.BlogService;
+import com.example.jar.model.service.BoardService;
 import com.example.jar.model.service.TestService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -21,10 +22,11 @@ public class DemoController {
 
     private final TestService testService;
     private final BlogService blogService;
+    private final BoardService boardService;
 
     @GetMapping("/hello1004")
     public String hello(Model model) {
-        model.addAttribute("data", "반갑습니다.");
+        model.addAttribute("data", "Hello, welcome!");
         return "hello";
     }
 
@@ -35,17 +37,18 @@ public class DemoController {
 
     @GetMapping("/")
     public String index(Model model) {
-        List<Article> articles = blogService.findAll();
+        // Use Board data for main page so newly created posts from /article_list (Board-based) appear here
+        List<Board> articles = boardService.findAll();
         model.addAttribute("articles", articles);
         return "index";
     }
 
     @GetMapping("/test1")
     public String thymeleafTest1(Model model) {
-        model.addAttribute("data1", "<h2> 반갑습니다</h2>");
-        model.addAttribute("data2", "태그의속성값");
+        model.addAttribute("data1", "<h2>Hello</h2>");
+        model.addAttribute("data2", "Sample inner value");
         model.addAttribute("link", "01");
-        model.addAttribute("name", "홍길동");
+        model.addAttribute("name", "Guest");
         model.addAttribute("para1", "001");
         model.addAttribute("para2", "002");
         return "thymeleaf_test1";
@@ -53,9 +56,10 @@ public class DemoController {
 
     @GetMapping("/testdb")
     public String getAllTestDBs(Model model) {
-        TestDB test = testService.findByName("홍길동");
+        TestDB test = testService.findByName("Guest");
         model.addAttribute("data4", test);
-        logger.info("데이터출력디버그: {}", test);
+        logger.info("테스트 데이터 조회: {}", test);
         return "testdb";
     }
 }
+
