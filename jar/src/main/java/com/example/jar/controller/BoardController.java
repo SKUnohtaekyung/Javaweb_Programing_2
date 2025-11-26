@@ -74,8 +74,15 @@ public class BoardController {
     }
 
     @GetMapping("/board_edit/{id}")
-    public String editForm(@PathVariable long id, Model model) {
+    public String editForm(@PathVariable long id, Model model, jakarta.servlet.http.HttpSession session) {
+        String email = (String) session.getAttribute("email");
+        if (email == null) {
+            return "redirect:/member_login";
+        }
         Board board = boardService.findById(id);
+        if (board != null && !email.equals(board.getAuthor())) {
+            return "redirect:/article_list";
+        }
         model.addAttribute("board", board);
         model.addAttribute("updateRequest", new com.example.jar.model.service.UpdateBoardRequest(board.getTitle(), board.getContent()));
         return "board_edit";
@@ -83,7 +90,16 @@ public class BoardController {
 
     @PostMapping("/api/boards/update/{id}")
     public String update(@PathVariable long id,
-                         @ModelAttribute com.example.jar.model.service.UpdateBoardRequest request) {
+                         @ModelAttribute com.example.jar.model.service.UpdateBoardRequest request,
+                         jakarta.servlet.http.HttpSession session) {
+        String email = (String) session.getAttribute("email");
+        if (email == null) {
+            return "redirect:/member_login";
+        }
+        Board board = boardService.findById(id);
+        if (board != null && !email.equals(board.getAuthor())) {
+            return "redirect:/article_list";
+        }
         boardService.update(id, request);
         return "redirect:/article_list";
     }

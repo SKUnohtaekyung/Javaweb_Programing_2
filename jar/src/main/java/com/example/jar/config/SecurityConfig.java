@@ -1,4 +1,4 @@
-package com.example.jar.config;
+﻿package com.example.jar.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -26,8 +26,13 @@ public class SecurityConfig {
                                 "/",
                                 "/about_detailed",
                                 "/board_list",
+                                "/board_view/**",
+                                "/board_edit/**",
+                                "/board/**",
                                 "/article_list",
+                                "/article_list/**",
                                 "/api/board/**",
+                                "/api/boards/**",
                                 "/api/article/**",
                                 "/join_new",
                                 "/api/members",
@@ -39,11 +44,15 @@ public class SecurityConfig {
                                 "/images/**",
                                 "/img/**"
                         ).permitAll()
-                        .anyRequest().authenticated()
+                        .anyRequest().permitAll()
                 )
+                .sessionManagement(session -> session.invalidSessionUrl("/member_login"))
+                .exceptionHandling(ex -> ex.accessDeniedPage("/error/403"))
                 .formLogin(form -> form.disable())
                 .logout(logout -> logout.logoutUrl("/logout").logoutSuccessUrl("/"));
 
         return http.build();
     }
 }
+
+

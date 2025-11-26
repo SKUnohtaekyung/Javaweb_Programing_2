@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
+import jakarta.servlet.http.HttpSession;
 
 @RequiredArgsConstructor
 @RestController
@@ -17,7 +18,12 @@ public class BoardRestController {
     private final BoardService boardService;
 
     @PostMapping("/api/boards")
-    public ResponseEntity<Board> addBoard(@ModelAttribute AddBoardRequest request) {
+    public ResponseEntity<Board> addBoard(@ModelAttribute AddBoardRequest request, HttpSession session) {
+        String email = (String) session.getAttribute("email");
+        if (email == null || email.isBlank()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        request.setUser(email); // 작성자 입력을 세션 정보로 덮어쓰기
         Board saved = boardService.save(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(saved);
     }
@@ -34,7 +40,15 @@ public class BoardRestController {
     }
 
     @DeleteMapping("/api/boards/{id}")
-    public ResponseEntity<Void> deleteBoard(@PathVariable long id) {
+    public ResponseEntity<Void> deleteBoard(@PathVariable long id, HttpSession session) {
+        String email = (String) session.getAttribute("email");
+        if (email == null || email.isBlank()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        Board board = boardService.findById(id);
+        if (!email.equals(board.getAuthor())) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
         boardService.delete(id);
         return ResponseEntity.ok().build();
     }

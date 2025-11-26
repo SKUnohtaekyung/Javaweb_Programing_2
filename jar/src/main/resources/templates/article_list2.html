@@ -16,7 +16,7 @@
             --card-border: rgba(255, 255, 255, 0.1);
             --glow-color: rgba(34, 211, 238, 0.4);
         }
-        body { background: var(--bg-dark); color: var(--text-primary); overflow-x: hidden; }
+        body { background: var(--bg-dark); color: var(--text-primary); overflow: hidden; }
         .glass-card { background: var(--card-bg); border: 1px solid var(--card-border); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); transition: all .3s cubic-bezier(.25,.8,.25,1); }
         .glass-card:hover { transform: translateY(-6px); box-shadow: 0 0 40px -10px var(--glow-color), 0 10px 15px -3px rgba(0,0,0,.2); }
         .glass-input { background: rgba(255,255,255,.05); border: 1px solid var(--card-border); transition: all .2s ease-in-out; }
@@ -52,9 +52,12 @@
                 <section class="mb-8 lg:mb-0">
                     <div class="glass-card rounded-2xl p-6">
                         <h2 class="text-xl font-bold mb-5 flex items-center gap-3">
-                            <i class="fa-solid fa-pen-nib text-cyan-400"></i> 새 글 작성
+                            <i class="fa-solid fa-pen-nib text-cyan-400"></i> 글 작성
                         </h2>
-                        <form id="add-article-form" class="space-y-4">
+                        <div th:if="${session.email == null}" class="rounded-lg border border-white/10 bg-white/5 px-4 py-3 text-sm text-center text-text-secondary">
+                            로그인 후 작성할 수 있습니다.
+                        </div>
+                        <form th:if="${session.email != null}" id="add-article-form" class="space-y-4">
                             <div>
                                 <label for="title" class="block text-sm font-medium text-text-secondary mb-1.5">제목</label>
                                 <input type="text" id="title" name="title" required class="glass-input w-full rounded-lg px-4 py-2.5 text-white placeholder:text-slate-500">
@@ -62,9 +65,6 @@
                             <div>
                                 <label for="content" class="block text-sm font-medium text-text-secondary mb-1.5">내용</label>
                                 <textarea id="content" name="content" rows="6" required class="glass-input w-full rounded-lg px-4 py-2.5 text-white placeholder:text-slate-500"></textarea>
-                            </div>
-                            <div>
-                                <input type="text" name="user" placeholder="작성자" class="glass-input w-full rounded-lg px-4 py-2.5 text-white placeholder:text-slate-500">
                             </div>
                             <div class="pt-2">
                                 <button type="submit" class="w-full bg-gradient-to-r from-cyan-500 to-blue-500 text-white font-bold py-3 px-6 rounded-lg transition-all duration-300 hover:shadow-[0_0_20px_var(--glow-color)] hover:scale-105">
@@ -80,16 +80,20 @@
                 <section>
                     <div id="article-list" class="space-y-6">
                         <div id="no-articles-message" th:if="${#lists.isEmpty(boards.content)}" class="glass-card rounded-2xl p-8 text-center">
-                            <p class="text-text-secondary">아직 게시글이 없습니다. 첫번째 글을 작성해보세요.</p>
+                            <p class="text-text-secondary">아직 게시글이 없습니다. 첫 번째 글을 작성해 보세요.</p>
                         </div>
 
                         <article th:each="board : ${boards.content}" th:id="'article-' + ${board.id}" class="glass-card rounded-2xl p-6 md:p-8">
-                            <h2 class="text-2xl font-bold mb-3" th:text="${board.title}"></h2>
-                            <p class="text-text-secondary leading-relaxed mb-6 whitespace-pre-wrap" th:text="${board.content}"></p>
+                            <h2 class="text-2xl font-bold mb-3" th:text="${board.title}">제목</h2>
+                            <p class="text-text-secondary leading-relaxed mb-6 whitespace-pre-wrap" th:text="${board.content}">내용</p>
+                            <div class="flex justify-between items-center text-sm text-slate-400 mb-4">
+                                <span th:text="${board.author}">작성자</span>
+                                <span th:text="${#temporals.format(board.createdAt, 'yyyy-MM-dd HH:mm')}">작성일</span>
+                            </div>
                             <div class="flex justify-end items-center gap-3 pt-4 border-t border-white/10">
-                                <a th:href="@{/board_edit/{id}(id=${board.id})}" class="text-sm text-cyan-300 bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-500/20 hover:border-cyan-500/40 rounded-lg px-4 py-2 font-semibold transition-colors flex items-center gap-2"><i class="fa-solid fa-pen"></i> 수정</a>
+                                <a th:if="${session.email != null and session.email == board.author}" th:href="@{/board_edit/{id}(id=${board.id})}" class="text-sm text-cyan-300 bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-500/20 hover:border-cyan-500/40 rounded-lg px-4 py-2 font-semibold transition-colors flex items-center gap-2"><i class="fa-solid fa-pen"></i> 수정</a>
                                 <button th:data-id="${board.id}" class="view-btn text-sm text-white bg-white/10 hover:bg-white/20 border border-white/10 rounded-lg px-4 py-2 font-semibold transition-colors flex items-center gap-2"><i class="fa-solid fa-eye"></i> 보기</button>
-                                <button th:data-id="${board.id}" class="delete-btn text-sm text-red-400 bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 hover:border-red-500/40 rounded-lg px-4 py-2 font-semibold transition-colors flex items-center gap-2"><i class="fa-solid fa-trash"></i> 삭제</button>
+                                <button th:if="${session.email != null and session.email == board.author}" th:data-id="${board.id}" class="delete-btn text-sm text-red-400 bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 hover:border-red-500/40 rounded-lg px-4 py-2 font-semibold transition-colors flex items-center gap-2"><i class="fa-solid fa-trash"></i> 삭제</button>
                             </div>
                         </article>
                     </div>
@@ -130,7 +134,7 @@
 
     <script>
     document.addEventListener('DOMContentLoaded', () => {
-        // 새 글 추가 처리
+        // 글 추가 처리
         const addArticleForm = document.getElementById('add-article-form');
         if (addArticleForm) {
             addArticleForm.addEventListener('submit', async (e) => {
@@ -150,18 +154,25 @@
                         article.innerHTML =
                             "<h2 class='text-2xl font-bold mb-3'></h2>" +
                             "<p class='text-text-secondary leading-relaxed mb-6 whitespace-pre-wrap'></p>" +
+                            "<div class='flex justify-between items-center text-sm text-slate-400 mb-4'>" +
+                            "  <span class='author'></span><span class='date'></span>" +
+                            "</div>" +
                             "<div class='flex justify-end items-center gap-3 pt-4 border-t border-white/10'>" +
-                            "  <a href='/board_edit/" + (data.id ?? '') + "' class='text-sm text-cyan-300 bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-500/20 hover:border-cyan-500/40 rounded-lg px-4 py-2 font-semibold transition-colors flex items-center gap-2'><i class='fa-solid fa-pen'></i> 수정</a>" +
+                            "  <a href='/board_edit/" + (data.id ?? '') + "' class='edit-btn text-sm text-cyan-300 bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-500/20 hover:border-cyan-500/40 rounded-lg px-4 py-2 font-semibold transition-colors flex items-center gap-2'><i class='fa-solid fa-pen'></i> 수정</a>" +
                             "  <button data-id='" + (data.id ?? '') + "' class='view-btn text-sm text-white bg-white/10 hover:bg-white/20 border border-white/10 rounded-lg px-4 py-2 font-semibold transition-colors flex items-center gap-2'><i class='fa-solid fa-eye'></i> 보기</button>" +
                             "  <button data-id='" + (data.id ?? '') + "' class='delete-btn text-sm text-red-400 bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 hover:border-red-500/40 rounded-lg px-4 py-2 font-semibold transition-colors flex items-center gap-2'><i class='fa-solid fa-trash'></i> 삭제</button>" +
                             "</div>";
                         const h = article.querySelector('h2'); if (h) h.textContent = (data.title || '').toString();
                         const p = article.querySelector('p'); if (p) p.textContent = (data.content || '').toString();
+                        const author = article.querySelector('.author'); if (author) author.textContent = data.author || '';
+                        const date = article.querySelector('.date'); if (date) date.textContent = data.createdAt || '';
                         if (list) list.prepend(article);
                         addArticleForm.reset();
                     } catch (_) {
                         window.location.reload();
                     }
+                } else if (response.status === 401) {
+                    alert('로그인이 필요합니다.');
                 }
             });
         }
@@ -230,4 +241,3 @@
     </script>
 </body>
 </html>
-

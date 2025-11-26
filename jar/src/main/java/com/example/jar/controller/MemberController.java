@@ -4,6 +4,8 @@ import com.example.jar.member.dto.AddMemberRequest;
 import com.example.jar.member.service.MemberService;
 import com.example.jar.model.domain.Member;
 import jakarta.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.Cookie;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -58,7 +60,9 @@ public class MemberController {
                         HttpSession session) {
         try {
             Member member = memberService.loginCheck(email, password);
-            session.setAttribute("loginMember", member);
+            session.setAttribute("memberId", member.getId());
+            session.setAttribute("email", member.getEmail());
+            session.setAttribute("name", member.getName());
             return "redirect:/";
         } catch (IllegalArgumentException e) {
             model.addAttribute("errorMessage", e.getMessage());
@@ -68,8 +72,12 @@ public class MemberController {
     }
 
     @GetMapping("/logout")
-    public String logout(HttpSession session) {
+    public String logout(HttpSession session, HttpServletResponse response) {
         session.invalidate();
+        Cookie cookie = new Cookie("JSESSIONID", null);
+        cookie.setPath("/");
+        cookie.setMaxAge(0);
+        response.addCookie(cookie);
         return "redirect:/";
     }
 }

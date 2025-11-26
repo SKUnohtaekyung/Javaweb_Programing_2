@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ko" class="scroll-smooth" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
@@ -34,6 +34,16 @@
             50% { transform: translateY(-8px); }
         }
         .arrow-bounce { animation: arrow-bounce 2.6s ease-in-out infinite; }
+        .reveal { opacity: 0; transform: translateY(32px); transition: opacity 0.8s ease, transform 0.8s ease; }
+        .reveal.visible { opacity: 1; transform: translateY(0); }
+        .float-soft { animation: float-soft 7s ease-in-out infinite; }
+        @keyframes float-soft { 0%{transform:translateY(0);}50%{transform:translateY(-8px);}100%{transform:translateY(0);} }
+        .btn-press { transition: transform 0.2s ease, box-shadow 0.2s ease; }
+        .btn-press:hover { transform: translateY(-2px) scale(1.01); box-shadow: 0 10px 24px rgba(17, 24, 39, 0.15); }
+        .motion-card { transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease; }
+        .motion-card:hover { transform: translateY(-6px); box-shadow: 0 12px 28px rgba(15, 23, 42, 0.15); }
+        .hover-lift { transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease; }
+        .hover-lift:hover { transform: translateY(-6px); box-shadow: 0 14px 32px rgba(0,0,0,0.12); border-color: rgba(56,189,248,0.35); }
     </style>
 </head>
 <body class="font-sans bg-background-color">
@@ -56,6 +66,19 @@
                 <button id="nav-close" class="absolute top-6 right-6 text-2xl md:hidden">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
                 </button>
+                <div class="md:hidden px-6 pb-10">
+                    <div th:if="${session.name != null}" class="flex items-center justify-between gap-3 bg-white border border-border-color px-4 py-3 rounded-2xl shadow-sm">
+                        <div class="text-left">
+                            <p class="text-sm text-text-secondary">어서오세요</p>
+                            <p class="text-base font-semibold text-text-primary" th:text="${session.name} + '님 안녕하세요!'">사용자님 안녕하세요!</p>
+                        </div>
+                        <a href="/logout" class="text-sm font-semibold text-brand-green border border-border-color px-3 py-2 rounded-xl hover:bg-sky-50 transition-colors">로그아웃</a>
+                    </div>
+                    <div th:unless="${session.name != null}" class="flex items-center justify-between gap-3">
+                        <a href="/member_login" class="flex-1 text-sm font-semibold text-text-primary border border-border-color bg-white px-4 py-3 rounded-xl shadow-sm text-center hover:text-brand-green transition-colors">로그인</a>
+                        <a href="/join_new" class="flex-1 text-sm font-semibold text-white bg-brand-green px-4 py-3 rounded-xl shadow-brand text-center hover:opacity-90 transition-opacity">회원가입</a>
+                    </div>
+                </div>
             </div>
             <div class="flex items-center gap-x-4 pr-4 md:pr-0 md:hidden">
                 <button id="nav-toggle" class="text-2xl cursor-pointer">
@@ -67,8 +90,14 @@
 
     <!-- Auth buttons (desktop) outside nav bar -->
     <div class="hidden md:flex absolute right-16 top-16 items-center gap-x-5 z-20">
-        <a href="/member_login" class="text-sm font-medium text-text-primary border border-border-color bg-white/90 px-4 py-2 rounded-full shadow-sm hover:text-brand-green transition-colors">로그인</a>
-        <a href="/join_new" class="bg-brand-green text-white text-sm font-semibold py-2 px-5 rounded-full shadow-brand hover:opacity-90 transition-opacity">회원가입</a>
+        <div th:if="${session.name != null}" class="flex items-center gap-x-3 bg-white/90 border border-border-color px-4 py-2 rounded-full shadow-sm">
+            <span class="text-sm font-semibold text-text-primary" th:text="${session.name} + '님 안녕하세요!'">사용자님 안녕하세요!</span>
+            <a href="/logout" class="text-sm font-semibold text-brand-green hover:opacity-80 transition-opacity">로그아웃</a>
+        </div>
+        <div th:unless="${session.name != null}" class="flex items-center gap-x-4">
+            <a href="/member_login" class="text-sm font-medium text-text-primary border border-border-color bg-white/90 px-4 py-2 rounded-full shadow-sm hover:text-brand-green transition-colors">로그인</a>
+            <a href="/join_new" class="bg-brand-green text-white text-sm font-semibold py-2 px-5 rounded-full shadow-brand hover:opacity-90 transition-opacity">회원가입</a>
+        </div>
     </div>
 
     <main class="overflow-hidden">
@@ -76,21 +105,21 @@
         <section id="home" class="pt-40 md:pt-44 pb-80 relative">
             <div class="container mx-auto px-4 md:px-6">
                 <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-12 px-6 md:px-12">
-                    <div class="text-center md:text-left">
+                    <div class="text-center md:text-left reveal" data-stagger="0">
                         <span class="text-lg font-bold text-brand-green">Welcome</span>
                         <h1 class="text-4xl md:text-6xl font-bold text-text-primary my-3 tracking-tight">I'm Noh TaeKyung</h1>
                         <p class="text-lg text-text-secondary mb-8">Product Manager</p>
                         <div class="flex justify-center md:justify-start items-center gap-x-6">
-                            <a href="#project" class="bg-text-primary text-background-color py-3 px-8 rounded-md font-bold hover:bg-opacity-80 transition-colors">MY PROJECT</a>
+                            <a href="#project" class="bg-text-primary text-background-color py-3 px-8 rounded-md font-bold hover:bg-opacity-80 transition-colors btn-press">MY PROJECT</a>
                             <div class="flex items-center gap-x-4">
-                                <a href="https://github.com/SKUnohtaekyung" class="text-text-secondary hover:text-text-primary">
+                                <a href="https://github.com/SKUnohtaekyung" class="text-text-secondary hover:text-text-primary btn-press">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"></path></svg>
                                 </a>
                             </div>
                         </div>
                     </div>
                     <div class="w-full md:w-auto flex justify-center md:justify-end">
-                        <img src="/img/me.png" alt="Noh TaeKyung's profile picture" class="rounded-full w-48 h-48 md:w-56 md:h-56 object-cover md:mt-2">
+                        <img src="/img/me.png" alt="Noh TaeKyung's profile picture" class="rounded-full w-48 h-48 md:w-56 md:h-56 object-cover md:mt-2 float-soft reveal" data-stagger="0.1">
                     </div>
                 </div>
             </div>
@@ -115,21 +144,21 @@
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-16">
                     <div class="md:col-span-1">
                         <div class="sticky top-24">
-                            <h2 class="text-5xl md:text-7xl font-black tracking-tighter">ABOUT ME.</h2>
+                            <h2 class="text-5xl md:text-7xl font-black tracking-tighter reveal">ABOUT ME.</h2>
                         </div>
                     </div>
                     <div class="md:col-span-2 relative">
                         <div class="absolute left-0 top-0 h-full w-px bg-white/10"></div>
                         <div class="space-y-10 pl-8">
-                            <div class="space-y-3">
+                            <div class="space-y-3 reveal">
                                 <h3 class="text-3xl font-bold text-sky-400">고객의 문제에 집중</h3>
                                 <p class="text-gray-300 text-lg leading-relaxed">“이게 정말 필요할까?”라는 질문에서 시작합니다. 고객의 실제 문제와 기대 가치를 먼저 정의하고, 솔루션은 그다음입니다.</p>
                             </div>
-                            <div class="space-y-3">
+                            <div class="space-y-3 reveal">
                                 <h3 class="text-3xl font-bold text-sky-400">빠른 학습과 실험</h3>
                                 <p class="text-gray-300 text-lg leading-relaxed">가설을 세우고 빠르게 검증하며, 실패를 학습 데이터로 활용합니다. 작은 실험을 반복해 리스크를 줄입니다.</p>
                             </div>
-                            <div class="space-y-3">
+                            <div class="space-y-3 reveal">
                                 <h3 class="text-3xl font-bold text-sky-400">팀과 함께 성장</h3>
                                 <p class="text-gray-300 text-lg leading-relaxed">투명한 커뮤니케이션과 기록으로 팀과 함께 성장하는 문화를 지향합니다.</p>
                             </div>
@@ -143,23 +172,23 @@
         <section id="bnd-intro" class="pt-24 md:pt-32 pb-16 md:pb-24">
             <div class="container mx-auto px-4 md:px-6">
                 <h2 class="text-4xl font-bold text-text-primary text-center tracking-tight">일을 보는 시야</h2>
-                <p class="text-lg text-text-secondary text-center mb-12">고객과 팀의 목표를 연결해 결과를 만드는 방법을 익혀왔습니다.</p>
+                <p class="text-lg text-text-secondary text-center mt-6 mb-12">고객과 팀의 목표를 연결해 결과를 만드는 방법을 익혀왔습니다.</p>
                 <div class="grid md:grid-cols-3 gap-10 mt-16">
-                    <div class="what-i-do-card bg-background-color p-10 rounded-lg border border-border-color text-center flex flex-col items-center cursor-pointer hover:shadow-brand">
+                    <div class="what-i-do-card bg-background-color p-10 rounded-lg border border-border-color text-center flex flex-col items-center cursor-pointer hover:shadow-brand motion-card">
                         <div class="w-16 h-16 bg-sky-100 text-brand-green rounded-full flex items-center justify-center mb-4">
                             <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
                         </div>
                         <h3 class="font-bold text-xl mb-3">명확한 커뮤니케이션</h3>
                         <p class="text-text-secondary leading-relaxed">목표를 기준으로 이해관계자의 목소리를 모으고, 모두가 같은 그림을 보도록 정리합니다.</p>
                     </div>
-                    <div class="what-i-do-card bg-background-color p-10 rounded-lg border border-border-color text-center flex flex-col items-center cursor-pointer hover:shadow-brand">
+                    <div class="what-i-do-card bg-background-color p-10 rounded-lg border border-border-color text-center flex flex-col items-center cursor-pointer hover:shadow-brand motion-card">
                         <div class="w-16 h-16 bg-sky-100 text-brand-green rounded-full flex items-center justify-center mb-4">
                            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
                         </div>
                         <h3 class="font-bold text-xl mb-3">계획과 실행</h3>
                         <p class="text-text-secondary leading-relaxed">전략적인 계획과 실행을 빠르게 반복해 결과물을 내고, 데이터로 다음 스텝을 결정합니다.</p>
                     </div>
-                    <div class="what-i-do-card bg-background-color p-10 rounded-lg border border-border-color text-center flex flex-col items-center cursor-pointer hover:shadow-brand">
+                    <div class="what-i-do-card bg-background-color p-10 rounded-lg border border-border-color text-center flex flex-col items-center cursor-pointer hover:shadow-brand motion-card">
                         <div class="w-16 h-16 bg-sky-100 text-brand-green rounded-full flex items-center justify-center mb-4">
                             <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="20" x2="12" y2="10"></line><line x1="18" y1="20" x2="18" y2="4"></line><line x1="6" y1="20" x2="6" y2="16"></line></svg>
                         </div>
@@ -176,8 +205,8 @@
                 <h2 class="text-3xl font-bold text-text-primary text-center tracking-tight">Hobbies & Interests</h2>
                 <div class="flex justify-center flex-wrap gap-4 mt-8 text-text-secondary">
                     <span class="bg-white border border-border-color px-4 py-2 rounded-full">#러닝</span>
-                    <span class="bg-white border border-border-color px-4 py-2 rounded-full">#등산</span>
-                    <span class="bg-white border border-border-color px-4 py-2 rounded-full">#애니메이션</span>
+                    <span class="bg-white border border-border-color px-4 py-2 rounded-full">#풋살</span>
+                    <span class="bg-white border border-border-color px-4 py-2 rounded-full">#패션</span>
                     <span class="bg-white border border-border-color px-4 py-2 rounded-full">#게임</span>
                 </div>
             </div>
@@ -187,23 +216,23 @@
         <section id="project" class="py-16 md:py-24">
             <div class="container mx-auto px-4 md:px-6 text-center">
                 <h2 class="text-3xl font-bold text-text-primary text-center tracking-tight">PROJECT</h2>
-                <p class="text-base text-text-secondary text-center mb-12">최근 진행한 프로젝트 샘플</p>
+                <p class="text-base text-text-secondary text-center mt-6 mb-12">최근 진행한 프로젝트 샘플</p>
                 <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-8 mt-12">
-                    <div class="bg-background-color border border-border-color rounded-lg text-left overflow-hidden hover:shadow-brand transition-transform duration-300 hover:scale-105 hover:-translate-y-2">
+                    <div class="bg-background-color border border-border-color rounded-lg text-left overflow-hidden hover:shadow-brand motion-card">
                         <img src="https://placehold.co/600x400/E0E0E0/757575?text=Project+1" alt="project image" class="w-full h-48 object-cover">
                         <div class="p-6">
                             <h3 class="text-lg font-bold text-text-primary mb-2">프로젝트 #1</h3>
                             <p class="text-sm text-text-secondary">간단한 설명을 넣을 수 있습니다.</p>
                         </div>
                     </div>
-                    <div class="bg-background-color border border-border-color rounded-lg text-left overflow-hidden hover:shadow-brand transition-transform duration-300 hover:scale-105 hover:-translate-y-2">
+                    <div class="bg-background-color border border-border-color rounded-lg text-left overflow-hidden hover:shadow-brand motion-card">
                         <img src="https://placehold.co/600x400/E0E0E0/757575?text=Project+2" alt="project image" class="w-full h-48 object-cover">
                         <div class="p-6">
                             <h3 class="text-lg font-bold text-text-primary mb-2">프로젝트 #2</h3>
                             <p class="text-sm text-text-secondary">간단한 설명을 넣을 수 있습니다.</p>
                         </div>
                     </div>
-                    <div class="bg-background-color border border-border-color rounded-lg text-left overflow-hidden hover:shadow-brand transition-transform duration-300 hover:scale-105 hover:-translate-y-2">
+                    <div class="bg-background-color border border-border-color rounded-lg text-left overflow-hidden hover:shadow-brand motion-card">
                         <img src="https://placehold.co/600x400/E0E0E0/757575?text=Project+3" alt="project image" class="w-full h-48 object-cover">
                         <div class="p-6">
                             <h3 class="text-lg font-bold text-text-primary mb-2">프로젝트 #3</h3>
@@ -218,9 +247,9 @@
         <section id="skills" class="py-16 md:py-24">
             <div class="container mx-auto px-4 md:px-6 text-center">
                 <h2 class="text-3xl font-bold text-text-primary text-center tracking-tight">SKILLS</h2>
-                <p class="text-base text-text-secondary text-center mb-12">프로덕트에 사용하는 기술 스택</p>
+                <p class="text-base text-text-secondary text-center mt-6 mb-12">프로덕트에 사용하는 기술 스택</p>
                 <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-5xl mx-auto mt-12 text-left">
-                    <div class="bg-white p-6 rounded-lg border border-border-color hover:shadow-brand transition-transform duration-300 hover:scale-105 hover:-translate-y-2">
+                    <div class="bg-white p-6 rounded-lg border border-border-color hover:shadow-brand hover-lift">
                         <div class="flex items-start gap-4">
                             <div class="flex-shrink-0 w-12 h-12"><img src="/img/figma_logo.png" alt="Figma Logo" class="w-full h-full object-contain"></div>
                             <div>
@@ -229,7 +258,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="bg-white p-6 rounded-lg border border-border-color hover:shadow-brand transition-transform duration-300 hover:scale-105 hover:-translate-y-2">
+                    <div class="bg-white p-6 rounded-lg border border-border-color hover:shadow-brand hover-lift">
                         <div class="flex items-start gap-4">
                             <div class="flex-shrink-0 w-12 h-12 text-[#61DAFB]">
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="-11.5 -10.23174 23 20.46348" fill="currentColor"><circle cx="0" cy="0" r="2.05" fill="#61dafb"/><g stroke="#61dafb" stroke-width="1" fill="none"><ellipse rx="11" ry="4.2"/><ellipse rx="11" ry="4.2" transform="rotate(60)"/><ellipse rx="11" ry="4.2" transform="rotate(120)"/></g></svg>
@@ -240,7 +269,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="bg-white p-6 rounded-lg border border-border-color hover:shadow-brand transition-transform duration-300 hover:scale-105 hover:-translate-y-2">
+                    <div class="bg-white p-6 rounded-lg border border-border-color hover:shadow-brand hover-lift">
                         <div class="flex items-start gap-4">
                             <div class="flex-shrink-0 w-12 h-12"><img src="/img/ts_logo.png" alt="TypeScript Logo" class="w-full h-full object-contain"></div>
                             <div>
@@ -249,7 +278,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="bg-white p-6 rounded-lg border border-border-color hover:shadow-brand transition-transform duration-300 hover:scale-105 hover:-translate-y-2">
+                    <div class="bg-white p-6 rounded-lg border border-border-color hover:shadow-brand hover-lift">
                         <div class="flex items-start gap-4">
                             <div class="flex-shrink-0 w-12 h-12"><img src="/img/js_logo.png" alt="JavaScript Logo" class="w-full h-full object-contain"></div>
                             <div>
@@ -258,7 +287,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="bg-white p-6 rounded-lg border border-border-color hover:shadow-brand transition-transform duration-300 hover:scale-105 hover:-translate-y-2">
+                    <div class="bg-white p-6 rounded-lg border border-border-color hover:shadow-brand hover-lift">
                         <div class="flex items-start gap-4">
                             <div class="flex-shrink-0 w-12 h-12"><img src="/img/tailwind_logo.png" alt="Tailwind CSS Logo" class="w-full h-full object-contain"></div>
                             <div>
@@ -276,29 +305,29 @@
         <section id="team" class="py-16 md:py-24">
             <div class="container mx-auto px-4 md:px-6 text-center">
                 <h2 class="text-3xl font-bold text-text-primary text-center tracking-tight">MY TEAM</h2>
-                <p class="text-base text-text-secondary text-center mb-12">Collaboration is the key to success.</p>
+                <p class="text-base text-text-secondary text-center mt-6 mb-12">함께하고 있는 팀원을 소개합니다.</p>
                 <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-8 mt-12">
-                    <div class="bg-background-color border border-border-color rounded-lg text-center p-8 hover:shadow-brand transition-transform duration-300 hover:scale-105 hover:-translate-y-2">
+                    <div class="bg-background-color border border-border-color rounded-lg text-center p-8 hover:shadow-brand hover-lift">
                         <img src="/img/me.png" alt="Team member photo" class="w-32 h-32 rounded-full mx-auto mb-4">
                         <h3 class="text-xl font-bold text-text-primary">노태경</h3>
                         <p class="text-brand-green font-medium">PM / UI/UX / Frontend</p>
                         <p class="text-text-secondary mt-2">프로젝트를 이끌고 사용자 경험을 설계합니다.</p>
                     </div>
-                    <div class="bg-background-color border border-border-color rounded-lg text-center p-8 hover:shadow-brand transition-transform duration-300 hover:scale-105 hover:-translate-y-2">
+                    <div class="bg-background-color border border-border-color rounded-lg text-center p-8 hover:shadow-brand hover-lift">
                         <img src="/img/jh.png" alt="Team member photo" class="w-32 h-32 rounded-full mx-auto mb-4">
-                        <h3 class="text-xl font-bold text-text-primary">정현</h3>
+                        <h3 class="text-xl font-bold text-text-primary">윤준하</h3>
                         <p class="text-brand-green font-medium">Backend & AI Developer</p>
                         <p class="text-text-secondary mt-2">핵심 로직과 AI 기능을 구현합니다.</p>
                     </div>
-                    <div class="bg-background-color border border-border-color rounded-lg text-center p-8 hover:shadow-brand transition-transform duration-300 hover:scale-105 hover:-translate-y-2">
+                    <div class="bg-background-color border border-border-color rounded-lg text-center p-8 hover:shadow-brand hover-lift">
                         <img src="/img/hl.png" alt="Team member photo" class="w-32 h-32 rounded-full mx-auto mb-4">
-                        <h3 class="text-xl font-bold text-text-primary">김하린</h3>
+                        <h3 class="text-xl font-bold text-text-primary">김혜린</h3>
                         <p class="text-brand-green font-medium">Frontend Developer</p>
                         <p class="text-text-secondary mt-2">직관적인 UI와 인터랙션을 만듭니다.</p>
                     </div>
-                    <div class="bg-background-color border border-border-color rounded-lg text-center p-8 hover:shadow-brand transition-transform duration-300 hover:scale-105 hover:-translate-y-2">
+                    <div class="bg-background-color border border-border-color rounded-lg text-center p-8 hover:shadow-brand hover-lift">
                         <img src="/img/hs.png" alt="Team member photo" class="w-32 h-32 rounded-full mx-auto mb-4">
-                        <h3 class="text-xl font-bold text-text-primary">이해선</h3>
+                        <h3 class="text-xl font-bold text-text-primary">오해서</h3>
                         <p class="text-brand-green font-medium">Backend Developer</p>
                         <p class="text-text-secondary mt-2">안정적인 서버와 데이터베이스를 구축합니다.</p>
                     </div>
@@ -310,7 +339,7 @@
         <section id="board" class="py-16 md:py-24">
             <div class="container mx-auto px-4 md:px-6 text-center">
                 <h2 class="text-3xl font-bold text-text-primary text-center tracking-tight">BOARD</h2>
-                <p class="text-base text-text-secondary text-center mb-12">최근 게시글 미리보기</p>
+                <p class="text-base text-text-secondary text-center mt-6 mb-12">최근 게시글 미리보기</p>
                 
                 <div class="max-w-4xl mx-auto mt-12 text-left bg-white border border-border-color rounded-lg shadow-md">
                     <div class="grid grid-cols-12 p-4 border-b border-border-color font-bold text-text-secondary bg-gray-50 rounded-t-lg">
@@ -340,7 +369,7 @@
         <section id="contact" class="py-16 md:py-24">
             <div class="container mx-auto px-4 md:px-6 text-center">
                 <h2 class="text-3xl font-bold text-text-primary text-center tracking-tight">CONTACT</h2>
-                <p class="text-base text-text-secondary text-center mb-12">프로젝트, 문의, 협업 제안을 기다립니다.</p>
+                <p class="text-base text-text-secondary text-center mt-6 mb-12">프로젝트, 문의, 협업 제안을 기다립니다.</p>
                 <div class="max-w-3xl mx-auto mt-12 text-left">
                     <div class="bg-white rounded-lg p-8 flex flex-col xs:flex-row items-center gap-6 text-center xs:text-left border border-border-color">
                         <img src="https://placehold.co/100x100/E0E0E0/757575?text=TK" alt="Profile Picture" class="w-24 h-24 rounded-full flex-shrink-0">
@@ -447,6 +476,25 @@
                 if(modalCloseBtn) modalCloseBtn.addEventListener('click', closeModal);
                 modal.addEventListener('click', (e) => {
                     if (e.target === modal) closeModal();
+                });
+            }
+
+            // ABOUT/section reveal with stagger
+            const revealEls = document.querySelectorAll('.reveal');
+            if (revealEls.length) {
+                const observer = new IntersectionObserver((entries, obs) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            const delay = parseFloat(entry.target.dataset.stagger || '0');
+                            entry.target.style.transitionDelay = `${delay}s`;
+                            entry.target.classList.add('visible');
+                            obs.unobserve(entry.target);
+                        }
+                    });
+                }, { threshold: 0.2 });
+                revealEls.forEach((el, idx) => {
+                    if (!el.dataset.stagger) el.dataset.stagger = (idx * 0.1).toFixed(2);
+                    observer.observe(el);
                 });
             }
         });
