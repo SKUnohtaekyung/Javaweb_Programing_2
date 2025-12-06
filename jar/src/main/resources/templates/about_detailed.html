@@ -1,5 +1,7 @@
 <!DOCTYPE html>
+<!-- 기술 스택 및 상세 소개 페이지 -->
 <html lang="ko">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,7 +14,8 @@
             --bg-dark: #080808;
             --text-primary: #F5F5F5;
             --text-secondary: #A1A1AA;
-            --accent-blue: #27d4ff; /* 레퍼런스 이미지에 맞춰 덜 밝은 파란색으로 수정 */
+            --accent-blue: #27d4ff;
+            /* 레퍼런스 이미지에 맞춰 덜 밝은 파란색으로 수정 */
             --card-bg: rgba(20, 20, 20, 0.6);
             --card-border: rgba(255, 255, 255, 0.08);
         }
@@ -29,7 +32,7 @@
             position: relative;
         }
 
-        /* Enhanced Background Effect */
+        /* 배경 효과 강화 */
         body::before {
             content: '';
             position: fixed;
@@ -40,18 +43,25 @@
             border-radius: 50%;
             z-index: -1;
             background: radial-gradient(circle, var(--accent-blue), transparent 50%);
-            filter: blur(100px); /* 블러 효과 강화 */
-            opacity: 0.2; /* 가시성 향상 */
+            filter: blur(100px);
+            /* 블러 효과 강화 */
+            opacity: 0.2;
+            /* 가시성 향상 */
             transform: translateX(-50%);
             animation: subtle-glow 20s ease-in-out infinite alternate;
         }
 
         @keyframes subtle-glow {
-            from { transform: translateX(-50%) scale(1); }
-            to { transform: translateX(-50%) scale(1.3); }
+            from {
+                transform: translateX(-50%) scale(1);
+            }
+
+            to {
+                transform: translateX(-50%) scale(1.3);
+            }
         }
-        
-        /* Background Text Layer */
+
+        /* 배경 텍스트 레이어 */
         .background-text {
             position: absolute;
             top: 40%;
@@ -66,7 +76,7 @@
             z-index: 0;
         }
 
-        /* Card Style */
+        /* 카드 스타일 */
         .skill-card {
             background: var(--card-bg);
             border: 1px solid var(--card-border);
@@ -74,22 +84,23 @@
             -webkit-backdrop-filter: blur(16px);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
-        
+
         .skill-card:hover {
             transform: translateY(-8px);
             box-shadow: 0 20px 30px rgba(0, 0, 0, 0.25);
         }
 
-        /* Custom Text Styles */
+        /* 커스텀 텍스트 스타일 */
         .main-title {
             font-size: clamp(3rem, 8vw, 6rem);
             font-weight: 900;
             line-height: 1.1;
-            /* Gradient Text */
+            /* 그라데이션 텍스트 */
             background: linear-gradient(90deg, var(--text-primary) 50%, var(--accent-blue) 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            color: var(--text-primary); /* Fallback */
+            color: var(--text-primary);
+            /* 대체 색상 */
         }
 
         .card-icon {
@@ -116,12 +127,14 @@
         }
     </style>
 </head>
+
 <body class="antialiased">
 
     <div class="relative z-10 min-h-screen p-6 sm:p-8 lg:p-12">
         <header class="flex justify-between items-center mb-24 md:mb-32">
             <a href="/" class="text-xl font-bold transition-colors hover:text-sky-400">Noh TaeKyung</a>
-            <a href="/#skills" class="text-sm font-semibold text-gray-400 transition-colors hover:text-white flex items-center gap-2">
+            <a href="/#skills"
+                class="text-sm font-semibold text-gray-400 transition-colors hover:text-white flex items-center gap-2">
                 <i class="fa-solid fa-arrow-left"></i>
                 Back to Main
             </a>
@@ -129,66 +142,71 @@
 
         <main class="container mx-auto max-w-7xl">
             <section id="skill-details" class="relative text-center">
-                <!-- Background Text Layer -->
+                <!-- 배경 텍스트 레이어 -->
                 <div class="background-text">SKILLS</div>
-                
-                <!-- Content Layers -->
+
+                <!-- 콘텐츠 레이어 -->
                 <div class="relative z-10">
                     <h1 class="main-title mb-8">Skills & Tools.</h1>
                     <p class="card-text max-w-3xl mx-auto mb-20 md:mb-24">
                         프로젝트를 통해 갈고닦은 기술 스택과 디자인 툴에 대한 저의 경험과 생각을 정리했습니다.
                     </p>
-    
-                    <!-- Skills Grid -->
+
+                    <!-- 스킬 그리드 -->
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-8 text-left">
-                        
-                        <!-- React Card -->
+
+                        <!-- React 카드 -->
                         <div class="skill-card rounded-2xl p-8">
                             <div class="card-icon text-blue-500"><i class="fa-brands fa-react"></i></div>
                             <h2 class="card-title text-primary mb-3">REACT</h2>
                             <p class="card-text">
-                                컴포넌트 기반 아키텍처를 활용하여 유지보수가 용이하고 확장성 높은 웹 애플리케이션을 구축합니다. 상태 관리 라이브러리(Redux, Zustand)와 연동하여 복잡한 상태 로직을 효율적으로 관리한 경험이 있습니다.
+                                컴포넌트 기반 아키텍처를 활용하여 유지보수가 용이하고 확장성 높은 웹 애플리케이션을 구축합니다. 상태 관리 라이브러리(Redux, Zustand)와 연동하여
+                                복잡한 상태 로직을 효율적으로 관리한 경험이 있습니다.
                             </p>
                         </div>
-    
-                        <!-- JavaScript Card -->
+
+                        <!-- JavaScript 카드 -->
                         <div class="skill-card rounded-2xl p-8">
                             <div class="card-icon text-yellow-400"><i class="fa-brands fa-js"></i></div>
                             <h2 class="card-title text-primary mb-3">JAVASCRIPT</h2>
                             <p class="card-text">
-                                ES6+ 최신 문법에 익숙하며, 비동기 처리(Async/Await, Promise)를 능숙하게 다룹니다. Vanilla JS를 사용하여 인터랙티브한 UI를 구현하고 DOM을 효과적으로 제어할 수 있습니다.
+                                ES6+ 최신 문법에 익숙하며, 비동기 처리(Async/Await, Promise)를 능숙하게 다룹니다. Vanilla JS를 사용하여 인터랙티브한 UI를
+                                구현하고 DOM을 효과적으로 제어할 수 있습니다.
                             </p>
                         </div>
-    
-                        <!-- TypeScript Card -->
+
+                        <!-- TypeScript 카드 -->
                         <div class="skill-card rounded-2xl p-8">
                             <div class="card-icon text-blue-500">
                                 <span class="font-bold text-xl">TS</span>
                             </div>
                             <h2 class="card-title text-primary mb-3">TYPESCRIPT</h2>
                             <p class="card-text">
-                                정적 타이핑을 통해 코드의 안정성을 높이고, 대규모 프로젝트에서의 협업 효율성을 극대화합니다. 인터페이스와 제네릭을 활용하여 재사용 가능하고 예측 가능한 코드를 작성하는 것을 선호합니다.
+                                정적 타이핑을 통해 코드의 안정성을 높이고, 대규모 프로젝트에서의 협업 효율성을 극대화합니다. 인터페이스와 제네릭을 활용하여 재사용 가능하고 예측 가능한
+                                코드를 작성하는 것을 선호합니다.
                             </p>
                         </div>
-    
-                        <!-- Figma Card -->
+
+                        <!-- Figma 카드 -->
                         <div class="skill-card rounded-2xl p-8">
                             <div class="card-icon text-orange-500"><i class="fa-brands fa-figma"></i></div>
                             <h2 class="card-title text-primary mb-3">FIGMA</h2>
                             <p class="card-text">
-                                아이디어 구상부터 와이어프레이밍, 프로토타이핑, 최종 UI 디자인까지 전 과정을 Figma로 진행합니다. 디자인 시스템을 구축하고 컴포넌트 기반으로 작업하여 개발팀과의 원활한 협업을 이끌어낸 경험이 있습니다.
+                                아이디어 구상부터 와이어프레이밍, 프로토타이핑, 최종 UI 디자인까지 전 과정을 Figma로 진행합니다. 디자인 시스템을 구축하고 컴포넌트 기반으로 작업하여
+                                개발팀과의 원활한 협업을 이끌어낸 경험이 있습니다.
                             </p>
                         </div>
-    
+
                     </div>
                 </div>
             </section>
         </main>
-        
+
         <footer class="text-center mt-24 md:mt-32 p-4">
             <p class="text-xs text-gray-600">© 2025 Noh TaeKyung. All Rights Reserved.</p>
         </footer>
     </div>
 
 </body>
+
 </html>

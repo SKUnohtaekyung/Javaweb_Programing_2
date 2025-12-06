@@ -1,5 +1,7 @@
 <!DOCTYPE html>
+<!-- 게시판 글 목록 및 검색, 작성 페이지 (메인 게시판 UI) -->
 <html xmlns:th="http://www.thymeleaf.org" lang="ko">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,66 +10,160 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
     <style>
         :root {
-            --bg-dark: #020617;
-            --text-primary: #E2E8F0;
-            --text-secondary: #94A3B8;
-            --accent-cyan: #0e7490;
-            --card-bg: rgba(15, 23, 42, 0.65);
-            --card-border: rgba(255, 255, 255, 0.1);
-            --glow-color: rgba(34, 211, 238, 0.4);
+            --bg-light-start: #f7fbff;
+            --bg-light-end: #eef2ff;
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --accent-cyan: #0ea5e9;
+            --card-bg: rgba(255, 255, 255, 0.85);
+            --card-border: #e5e7eb;
+            --shadow-color: rgba(59, 130, 246, 0.25);
+            --glow-color: rgba(14, 165, 233, 0.22);
         }
-        body { background: var(--bg-dark); color: var(--text-primary); overflow: hidden; }
-        .glass-card { background: var(--card-bg); border: 1px solid var(--card-border); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); transition: all .3s cubic-bezier(.25,.8,.25,1); }
-        .glass-card:hover { transform: translateY(-6px); box-shadow: 0 0 40px -10px var(--glow-color), 0 10px 15px -3px rgba(0,0,0,.2); }
-        .glass-input { background: rgba(255,255,255,.05); border: 1px solid var(--card-border); transition: all .2s ease-in-out; }
-        .glass-input:focus { outline: none; border-color: var(--accent-cyan); box-shadow: 0 0 15px var(--glow-color); background: rgba(255,255,255,.08); }
+
+        body {
+            background: radial-gradient(circle at 20% 20%, rgba(14, 165, 233, 0.12), transparent 30%),
+                radial-gradient(circle at 80% 0%, rgba(99, 102, 241, 0.12), transparent 35%),
+                linear-gradient(135deg, var(--bg-light-start), var(--bg-light-end));
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .glass-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            transition: box-shadow .25s ease;
+            box-shadow: 0 20px 55px -30px var(--shadow-color), 0 10px 30px -20px rgba(15, 23, 42, 0.35);
+        }
+
+        .glass-card:hover {
+            box-shadow: 0 28px 70px -36px var(--shadow-color), 0 12px 32px -18px rgba(15, 23, 42, 0.3);
+        }
+
+        .glass-input {
+            background: rgba(255, 255, 255, .75);
+            border: 1px solid var(--card-border);
+            transition: all .2s ease-in-out;
+            color: var(--text-primary);
+        }
+
+        .glass-input:focus {
+            outline: none;
+            border-color: var(--accent-cyan);
+            box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.15);
+            background: #fff;
+        }
+
+        /* Pagination - match glassmorphic cards but with bolder, clearer pills */
+        .pagination-shell {
+            gap: .75rem;
+        }
+
+        .pagination-pill {
+            min-width: 44px;
+            padding: 0.65rem 0.95rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 0.95rem;
+            letter-spacing: 0.01em;
+            color: var(--text-secondary);
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid var(--card-border);
+            border-radius: 9999px;
+            box-shadow: 0 12px 32px -24px rgba(15, 23, 42, 0.45), 0 8px 24px -18px var(--shadow-color);
+            transition: transform .15s ease, box-shadow .2s ease, color .15s ease, border-color .15s ease, background-color .15s ease;
+        }
+
+        .pagination-pill:hover {
+            color: var(--accent-cyan);
+            border-color: rgba(14, 165, 233, 0.65);
+            box-shadow: 0 14px 34px -24px rgba(15, 23, 42, 0.5), 0 10px 26px -18px rgba(14, 165, 233, 0.35);
+            transform: translateY(-1px);
+        }
+
+        .pagination-pill.active {
+            color: #fff;
+            border-color: transparent;
+            background: linear-gradient(135deg, #0ea5e9, #2563eb);
+            box-shadow: 0 15px 35px -22px rgba(14, 165, 233, 0.6), 0 0 0 4px rgba(14, 165, 233, 0.18);
+            transform: translateY(-2px);
+        }
+
+        .pagination-pill.disabled {
+            opacity: .45;
+            cursor: not-allowed;
+            pointer-events: none;
+            color: var(--text-secondary);
+        }
     </style>
 </head>
+
 <body class="antialiased">
-    <div class="relative z-10 min-h-screen p-4 sm:p-6 lg:p-8">
-        <header class="flex justify-between items-center mb-12 md:mb-16 max-w-7xl mx-auto">
-            <h1 class="text-3xl md:text-4xl font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-white to-slate-400">BOARD</h1>
-            <a href="/#board" class="text-sm font-bold transition-all duration-300 hover:text-white flex items-center gap-2 px-4 py-2 rounded-lg bg-white/5 border border-white/10 hover:border-cyan-400 hover:bg-cyan-500/10">
+    <div class="relative z-10 min-h-screen p-4 sm:p-6 lg:p-10">
+        <header class="max-w-7xl mx-auto mb-8 md:mb-10 flex items-center justify-between">
+            <div>
+                <p class="text-xs uppercase tracking-[0.35em] text-sky-500">The Archive</p>
+                <h1
+                    class="text-3xl md:text-4xl font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-slate-900 via-sky-700 to-sky-500">
+                    BOARD</h1>
+                <p class="text-sm text-slate-500 mt-2">팀 업데이트와 학습 기록을 남기는 공간입니다.</p>
+            </div>
+            <a href="/#board"
+                class="text-sm font-bold transition-all duration-300 text-slate-800 flex items-center gap-2 px-4 py-2 rounded-lg bg-white border border-slate-200 shadow-sm hover:shadow-md hover:border-sky-300 hover:text-sky-700">
                 <i class="fa-solid fa-arrow-left"></i>
                 <span class="hidden md:inline">Back to Main</span>
             </a>
         </header>
 
-        <div class="max-w-7xl mx-auto lg:grid lg:grid-cols-3 lg:gap-8">
-            <aside class="lg:col-span-1 lg:sticky lg:top-8 h-fit">
-                <section class="mb-8 lg:mb-0">
+        <div class="max-w-7xl mx-auto lg:grid lg:grid-cols-3 lg:gap-10">
+            <aside class="lg:col-span-1 lg:sticky lg:top-10 space-y-6 pb-6">
+                <section class="mb-0">
                     <div class="glass-card rounded-2xl p-6">
                         <h2 class="text-xl font-bold mb-5 flex items-center gap-3">
                             <i class="fa-solid fa-magnifying-glass text-cyan-400"></i> 검색
                         </h2>
                         <form th:action="@{/article_list}" method="get" class="flex gap-3">
                             <input type="text" name="keyword" placeholder="검색어를 입력하세요" th:value="${keyword}"
-                                   class="glass-input w-full rounded-lg px-4 py-2.5 text-white placeholder:text-slate-500" />
-                            <button type="submit" class="bg-cyan-600 hover:bg-cyan-500 text-white font-bold px-4 rounded-lg flex items-center justify-center" aria-label="검색">
+                                class="glass-input w-full rounded-lg px-4 py-2.5 text-slate-800 placeholder:text-slate-500" />
+                            <button type="submit"
+                                class="bg-cyan-600 hover:bg-cyan-500 text-white font-bold px-4 rounded-lg flex items-center justify-center"
+                                aria-label="검색">
                                 <i class="fa-solid fa-magnifying-glass text-white"></i>
                             </button>
                         </form>
                     </div>
                 </section>
-                <section class="mb-8 lg:mb-0">
+                <section class="mb-0">
                     <div class="glass-card rounded-2xl p-6">
                         <h2 class="text-xl font-bold mb-5 flex items-center gap-3">
                             <i class="fa-solid fa-pen-nib text-cyan-400"></i> 글 작성
                         </h2>
-                        <div th:if="${session.email == null}" class="rounded-lg border border-white/10 bg-white/5 px-4 py-3 text-sm text-center text-text-secondary">
-                            로그인 후 작성할 수 있습니다.
+                        <div th:if="${session.email == null}"
+                            class="rounded-lg border border-slate-200 bg-sky-50 px-4 py-3 text-sm text-center text-sky-800">
+                            <a href="/member_login" class="block w-full text-sky-700 font-semibold">로그인 / 회원가입</a>
                         </div>
                         <form th:if="${session.email != null}" id="add-article-form" class="space-y-4">
                             <div>
-                                <label for="title" class="block text-sm font-medium text-text-secondary mb-1.5">제목</label>
-                                <input type="text" id="title" name="title" required class="glass-input w-full rounded-lg px-4 py-2.5 text-white placeholder:text-slate-500">
+                                <label for="title"
+                                    class="block text-sm font-medium text-text-secondary mb-1.5">제목</label>
+                                <input type="text" id="title" name="title" required
+                                    class="glass-input w-full rounded-lg px-4 py-2.5 text-slate-800 placeholder:text-slate-500">
                             </div>
                             <div>
-                                <label for="content" class="block text-sm font-medium text-text-secondary mb-1.5">내용</label>
-                                <textarea id="content" name="content" rows="6" required class="glass-input w-full rounded-lg px-4 py-2.5 text-white placeholder:text-slate-500"></textarea>
+                                <label for="content"
+                                    class="block text-sm font-medium text-text-secondary mb-1.5">내용</label>
+                                <textarea id="content" name="content" rows="6" required
+                                    class="glass-input w-full rounded-lg px-4 py-2.5 text-slate-800 placeholder:text-slate-500"></textarea>
                             </div>
                             <div class="pt-2">
-                                <button type="submit" class="w-full bg-gradient-to-r from-cyan-500 to-blue-500 text-white font-bold py-3 px-6 rounded-lg transition-all duration-300 hover:shadow-[0_0_20px_var(--glow-color)] hover:scale-105">
+                                <button type="submit"
+                                    class="w-full bg-gradient-to-r from-cyan-500 to-blue-500 text-white font-bold py-3 px-6 rounded-lg transition-all duration-300 hover:shadow-[0_0_20px_var(--glow-color)] hover:scale-105">
                                     <i class="fa-solid fa-plus mr-2"></i> 글 추가하기
                                 </button>
                             </div>
@@ -76,45 +172,56 @@
                 </section>
             </aside>
 
-            <main class="lg:col-span-2">
+            <main class="lg:col-span-2 space-y-6 pb-6">
                 <section>
                     <div id="article-list" class="space-y-6">
-                        <div id="no-articles-message" th:if="${#lists.isEmpty(boards.content)}" class="glass-card rounded-2xl p-8 text-center">
+                        <div id="no-articles-message" th:if="${#lists.isEmpty(boards.content)}"
+                            class="glass-card rounded-2xl p-8 text-center">
                             <p class="text-text-secondary">아직 게시글이 없습니다. 첫 번째 글을 작성해 보세요.</p>
                         </div>
 
-                        <article th:each="board : ${boards.content}" th:id="'article-' + ${board.id}" class="glass-card rounded-2xl p-6 md:p-8">
+                        <article th:each="board : ${boards.content}" th:id="'article-' + ${board.id}"
+                            class="glass-card rounded-2xl p-6 md:p-8">
                             <h2 class="text-2xl font-bold mb-3" th:text="${board.title}">제목</h2>
-                            <p class="text-text-secondary leading-relaxed mb-6 whitespace-pre-wrap" th:text="${board.content}">내용</p>
+                            <p class="text-text-secondary leading-relaxed mb-6 whitespace-pre-wrap"
+                                th:text="${board.content}">내용</p>
                             <div class="flex justify-between items-center text-sm text-slate-400 mb-4">
                                 <span th:text="${board.author}">작성자</span>
                                 <span th:text="${#temporals.format(board.createdAt, 'yyyy-MM-dd HH:mm')}">작성일</span>
                             </div>
-                            <div class="flex justify-end items-center gap-3 pt-4 border-t border-white/10">
-                                <a th:if="${session.email != null and session.email == board.author}" th:href="@{/board_edit/{id}(id=${board.id})}" class="text-sm text-cyan-300 bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-500/20 hover:border-cyan-500/40 rounded-lg px-4 py-2 font-semibold transition-colors flex items-center gap-2"><i class="fa-solid fa-pen"></i> 수정</a>
-                                <button th:data-id="${board.id}" class="view-btn text-sm text-white bg-white/10 hover:bg-white/20 border border-white/10 rounded-lg px-4 py-2 font-semibold transition-colors flex items-center gap-2"><i class="fa-solid fa-eye"></i> 보기</button>
-                                <button th:if="${session.email != null and session.email == board.author}" th:data-id="${board.id}" class="delete-btn text-sm text-red-400 bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 hover:border-red-500/40 rounded-lg px-4 py-2 font-semibold transition-colors flex items-center gap-2"><i class="fa-solid fa-trash"></i> 삭제</button>
+                            <div class="flex justify-end items-center gap-3 pt-4 border-t border-slate-200">
+                                <a th:if="${session.email != null and session.email == board.author}"
+                                    th:href="@{/board_edit/{id}(id=${board.id})}"
+                                    class="text-sm text-sky-700 bg-sky-50 hover:bg-sky-100 border border-sky-200 hover:border-sky-300 rounded-lg px-4 py-2 font-semibold transition-colors flex items-center gap-2"><i
+                                        class="fa-solid fa-pen"></i> 수정</a>
+                                <button th:data-id="${board.id}"
+                                    class="view-btn text-sm text-slate-800 bg-white hover:bg-sky-50 border border-slate-200 hover:border-sky-300 rounded-lg px-4 py-2 font-semibold transition-colors flex items-center gap-2"><i
+                                        class="fa-solid fa-eye"></i> 보기</button>
+                                <button th:if="${session.email != null and session.email == board.author}"
+                                    th:data-id="${board.id}"
+                                    class="delete-btn text-sm text-red-600 bg-red-50 hover:bg-red-100 border border-red-200 hover:border-red-300 rounded-lg px-4 py-2 font-semibold transition-colors flex items-center gap-2"><i
+                                        class="fa-solid fa-trash"></i> 삭제</button>
                             </div>
                         </article>
                     </div>
                 </section>
 
                 <section class="mt-8">
-                    <div class="glass-card rounded-2xl p-4 flex items-center justify-center gap-2">
+                    <div class="glass-card rounded-2xl p-4 flex flex-wrap items-center justify-center pagination-shell">
                         <a th:href="@{/article_list(page=${currentPage - 1}, keyword=${keyword})}"
-                           th:classappend="${currentPage == 0} ? 'opacity-50 pointer-events-none'"
-                           class="px-3 py-1 rounded-lg bg-white/5 border border-white/10 hover:border-cyan-400 hover:bg-cyan-500/10 text-sm">이전</a>
+                            th:classappend="${currentPage == 0} ? 'disabled'"
+                            class="pagination-pill">이전</a>
 
                         <span th:if="${totalPages > 0}" th:each="i : ${#numbers.sequence(0, totalPages - 1)}">
-                            <a th:href="@{/article_list(page=${i}, keyword=${keyword})}"
-                               th:text="${i + 1}"
-                               th:classappend="${i == currentPage} ? 'bg-cyan-600 text-white' : ''"
-                               class="mx-1 px-3 py-1 rounded-lg bg-white/5 border border-white/10 hover:border-cyan-400 hover:bg-cyan-500/10 text-sm">1</a>
+                            <a th:href="@{/article_list(page=${i}, keyword=${keyword})}" th:text="${i + 1}"
+                                th:classappend="${i == currentPage} ? 'active' : ''"
+                                th:attr="aria-current=${i == currentPage} ? 'page' : null"
+                                class="pagination-pill">1</a>
                         </span>
 
                         <a th:href="@{/article_list(page=${currentPage + 1}, keyword=${keyword})}"
-                           th:classappend="${currentPage + 1 >= totalPages} ? 'opacity-50 pointer-events-none'"
-                           class="px-3 py-1 rounded-lg bg-white/5 border border-white/10 hover:border-cyan-400 hover:bg-cyan-500/10 text-sm">다음</a>
+                            th:classappend="${currentPage + 1 >= totalPages} ? 'disabled'"
+                            class="pagination-pill">다음</a>
                     </div>
                 </section>
             </main>
@@ -133,99 +240,84 @@
     </div>
 
     <script>
-    document.addEventListener('DOMContentLoaded', () => {
-        // 글 추가 처리
-        const addArticleForm = document.getElementById('add-article-form');
-        if (addArticleForm) {
-            addArticleForm.addEventListener('submit', async (e) => {
-                e.preventDefault();
-                const formData = new FormData(addArticleForm);
-                const response = await fetch('/api/boards', { method: 'POST', headers: { 'Accept': 'application/json' }, body: new URLSearchParams(formData) });
-                if (response.ok) {
-                    try {
-                        const data = await response.json();
-                        const list = document.getElementById('article-list');
-                        const emptyMsg = document.getElementById('no-articles-message');
-                        if (emptyMsg) emptyMsg.remove();
-
-                        const article = document.createElement('article');
-                        article.className = 'glass-card rounded-2xl p-6 md:p-8';
-                        article.id = 'article-' + (data.id ?? '');
-                        article.innerHTML =
-                            "<h2 class='text-2xl font-bold mb-3'></h2>" +
-                            "<p class='text-text-secondary leading-relaxed mb-6 whitespace-pre-wrap'></p>" +
-                            "<div class='flex justify-between items-center text-sm text-slate-400 mb-4'>" +
-                            "  <span class='author'></span><span class='date'></span>" +
-                            "</div>" +
-                            "<div class='flex justify-end items-center gap-3 pt-4 border-t border-white/10'>" +
-                            "  <a href='/board_edit/" + (data.id ?? '') + "' class='edit-btn text-sm text-cyan-300 bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-500/20 hover:border-cyan-500/40 rounded-lg px-4 py-2 font-semibold transition-colors flex items-center gap-2'><i class='fa-solid fa-pen'></i> 수정</a>" +
-                            "  <button data-id='" + (data.id ?? '') + "' class='view-btn text-sm text-white bg-white/10 hover:bg-white/20 border border-white/10 rounded-lg px-4 py-2 font-semibold transition-colors flex items-center gap-2'><i class='fa-solid fa-eye'></i> 보기</button>" +
-                            "  <button data-id='" + (data.id ?? '') + "' class='delete-btn text-sm text-red-400 bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 hover:border-red-500/40 rounded-lg px-4 py-2 font-semibold transition-colors flex items-center gap-2'><i class='fa-solid fa-trash'></i> 삭제</button>" +
-                            "</div>";
-                        const h = article.querySelector('h2'); if (h) h.textContent = (data.title || '').toString();
-                        const p = article.querySelector('p'); if (p) p.textContent = (data.content || '').toString();
-                        const author = article.querySelector('.author'); if (author) author.textContent = data.author || '';
-                        const date = article.querySelector('.date'); if (date) date.textContent = data.createdAt || '';
-                        if (list) list.prepend(article);
-                        addArticleForm.reset();
-                    } catch (_) {
-                        window.location.reload();
-                    }
-                } else if (response.status === 401) {
-                    alert('로그인이 필요합니다.');
-                }
-            });
-        }
-
-        // 삭제 처리
-        const articleList = document.getElementById('article-list');
-        if (articleList) {
-            articleList.addEventListener('click', async (e) => {
-                const target = e.target.closest('.delete-btn');
-                if (!target) return;
-                const articleId = target.dataset.id;
-                if (confirm('정말 게시글을 삭제하시겠습니까?')) {
-                    const response = await fetch(`/api/boards/${articleId}`, { method: 'DELETE' });
+        document.addEventListener('DOMContentLoaded', () => {
+            // 글 추가
+            const addArticleForm = document.getElementById('add-article-form');
+            if (addArticleForm) {
+                addArticleForm.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    const formData = new FormData(addArticleForm);
+                    const response = await fetch('/api/boards', { method: 'POST', headers: { 'Accept': 'application/json' }, body: new URLSearchParams(formData) });
                     if (response.ok) {
-                        const articleElement = document.getElementById(`article-${articleId}`);
-                        if (articleElement) {
-                            articleElement.style.transition = 'opacity 0.5s, transform 0.5s';
-                            articleElement.style.opacity = '0';
-                            articleElement.style.transform = 'translateX(-20px)';
-                            setTimeout(() => articleElement.remove(), 500);
-                        }
-                    } else {
-                        alert('삭제에 실패했습니다.');
-                    }
-                }
-            });
-        }
+                        try {
+                            const data = await response.json();
+                            const list = document.getElementById('article-list');
+                            const emptyMsg = document.getElementById('no-articles-message');
+                            if (emptyMsg) emptyMsg.remove();
 
-        // 보기 모달
-        const modal = document.getElementById('view-modal');
-        const modalTitle = document.getElementById('view-modal-title');
-        const modalContent = document.getElementById('view-modal-content');
-        document.getElementById('view-modal-close')?.addEventListener('click', () => { modal.classList.add('hidden'); modal.classList.remove('flex'); });
-        modal?.addEventListener('click', (e) => { if (e.target === modal) { modal.classList.add('hidden'); modal.classList.remove('flex'); }});
-        articleList?.addEventListener('click', async (e) => {
-            const viewBtn = e.target.closest('.view-btn');
-            if (viewBtn) {
-                const id = viewBtn.dataset.id;
-                const resp = await fetch(`/api/boards/${id}/view`);
-                if (resp.ok) {
-                    const data = await resp.json();
-                    modalTitle.textContent = data.title || '';
-                    modalContent.textContent = data.content || '';
-                    modal.classList.remove('hidden'); modal.classList.add('flex');
-                }
-                e.preventDefault();
-                return;
+                            const article = document.createElement('article');
+                            article.className = 'glass-card rounded-2xl p-6 md:p-8';
+                            article.id = 'article-' + (data.id ?? '');
+                            article.innerHTML =
+                                "<h2 class='text-2xl font-bold mb-3'></h2>" +
+                                "<p class='text-text-secondary leading-relaxed mb-6 whitespace-pre-wrap'></p>" +
+                                "<div class='flex justify-between items-center text-sm text-slate-400 mb-4'>" +
+                                "  <span class='author'></span><span class='date'></span>" +
+                                "</div>" +
+                                "<div class='flex justify-end items-center gap-3 pt-4 border-t border-slate-200'>" +
+                                "  <a href='/board_edit/" + (data.id ?? '') + "' class='edit-btn text-sm text-sky-700 bg-sky-50 hover:bg-sky-100 border border-sky-200 hover:border-sky-300 rounded-lg px-4 py-2 font-semibold transition-colors flex items-center gap-2'><i class='fa-solid fa-pen'></i> 수정</a>" +
+                                "  <button data-id='" + (data.id ?? '') + "' class='view-btn text-sm text-slate-800 bg-white hover:bg-sky-50 border border-slate-200 hover:border-sky-300 rounded-lg px-4 py-2 font-semibold transition-colors flex items-center gap-2'><i class='fa-solid fa-eye'></i> 보기</button>" +
+                                "  <button data-id='" + (data.id ?? '') + "' class='delete-btn text-sm text-red-600 bg-red-50 hover:bg-red-100 border border-red-200 hover:border-red-300 rounded-lg px-4 py-2 font-semibold transition-colors flex items-center gap-2'><i class='fa-solid fa-trash'></i> 삭제</button>" +
+                                "</div>";
+                            const h = article.querySelector('h2'); if (h) h.textContent = (data.title || '').toString();
+                            const p = article.querySelector('p'); if (p) p.textContent = (data.content || '').toString();
+                            const author = article.querySelector('.author'); if (author) author.textContent = data.author || '';
+                            const date = article.querySelector('.date'); if (date) date.textContent = data.createdAt || '';
+                            if (list) list.prepend(article);
+                            addArticleForm.reset();
+                        } catch (_) {
+                            window.location.reload();
+                        }
+                    } else if (response.status === 401) {
+                        alert('로그인이 필요합니다.');
+                    }
+                });
             }
-            const viewLink = e.target.closest('a[href^="/board_view/"]');
-            if (viewLink) {
-                const idMatch = (viewLink.closest('article')?.id || '').match(/article-(\d+)/);
-                const id = idMatch ? idMatch[1] : null;
-                if (id) {
+
+            // 삭제
+            const articleList = document.getElementById('article-list');
+            if (articleList) {
+                articleList.addEventListener('click', async (e) => {
+                    const target = e.target.closest('.delete-btn');
+                    if (!target) return;
+                    const articleId = target.dataset.id;
+                    if (confirm('정말 게시글을 삭제하시겠습니까?')) {
+                        const response = await fetch(`/api/boards/${articleId}`, { method: 'DELETE' });
+                        if (response.ok) {
+                            const articleElement = document.getElementById(`article-${articleId}`);
+                            if (articleElement) {
+                                articleElement.style.transition = 'opacity 0.5s, transform 0.5s';
+                                articleElement.style.opacity = '0';
+                                articleElement.style.transform = 'translateX(-20px)';
+                                setTimeout(() => articleElement.remove(), 500);
+                            }
+                        } else {
+                            alert('삭제에 실패했습니다.');
+                        }
+                    }
+                });
+            }
+
+            // 보기 모달
+            const modal = document.getElementById('view-modal');
+            const modalTitle = document.getElementById('view-modal-title');
+            const modalContent = document.getElementById('view-modal-content');
+            document.getElementById('view-modal-close')?.addEventListener('click', () => { modal.classList.add('hidden'); modal.classList.remove('flex'); });
+            modal?.addEventListener('click', (e) => { if (e.target === modal) { modal.classList.add('hidden'); modal.classList.remove('flex'); } });
+            articleList?.addEventListener('click', async (e) => {
+                const viewBtn = e.target.closest('.view-btn');
+                if (viewBtn) {
+                    const id = viewBtn.dataset.id;
                     const resp = await fetch(`/api/boards/${id}/view`);
                     if (resp.ok) {
                         const data = await resp.json();
@@ -233,11 +325,27 @@
                         modalContent.textContent = data.content || '';
                         modal.classList.remove('hidden'); modal.classList.add('flex');
                     }
+                    e.preventDefault();
+                    return;
                 }
-                e.preventDefault();
-            }
+                const viewLink = e.target.closest('a[href^="/board_view/"]');
+                if (viewLink) {
+                    const idMatch = (viewLink.closest('article')?.id || '').match(/article-(\d+)/);
+                    const id = idMatch ? idMatch[1] : null;
+                    if (id) {
+                        const resp = await fetch(`/api/boards/${id}/view`);
+                        if (resp.ok) {
+                            const data = await resp.json();
+                            modalTitle.textContent = data.title || '';
+                            modalContent.textContent = data.content || '';
+                            modal.classList.remove('hidden'); modal.classList.add('flex');
+                        }
+                    }
+                    e.preventDefault();
+                }
+            });
         });
-    });
     </script>
 </body>
+
 </html>

@@ -1,40 +1,48 @@
 <!DOCTYPE html>
+<!-- 게시글 상세 조회 화면 -->
 <html xmlns:th="http://www.thymeleaf.org" lang="ko">
+
 <head>
   <meta charset="UTF-8">
   <title>Board View</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 </head>
+
 <body style="font-family: 'Noto Sans KR', sans-serif; background: #0b1224; color: #e2e8f0; margin: 0; padding: 0;">
-  <div style="max-width: 760px; margin: 40px auto; padding: 24px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; box-shadow: 0 20px 50px rgba(0,0,0,0.25);">
+  <div
+    style="max-width: 760px; margin: 40px auto; padding: 24px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; box-shadow: 0 20px 50px rgba(0,0,0,0.25);">
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 12px;">
       <h1 style="margin:0; font-size: 28px; font-weight: 800;" th:text="${board.title}">title</h1>
       <a th:href="@{/board_list}" style="color:#22d3ee; text-decoration:none; font-weight:700;">목록으로</a>
     </div>
     <p style="margin:4px 0; font-size:14px; color:#94a3b8;">
       <strong style="color:#cbd5e1;">작성자:</strong> <span th:text="${board.author}"></span> ·
-      <strong style="color:#cbd5e1;">작성일:</strong> <span th:text="${#temporals.format(board.createdAt, 'yyyy-MM-dd HH:mm')}"></span> ·
+      <strong style="color:#cbd5e1;">작성일:</strong> <span
+        th:text="${#temporals.format(board.createdAt, 'yyyy-MM-dd HH:mm')}"></span> ·
       <strong style="color:#cbd5e1;">조회:</strong> <span th:text="${board.viewCount}"></span> ·
       <strong style="color:#cbd5e1;">좋아요:</strong> <span th:text="${board.likeCount}"></span>
     </p>
-    <div style="margin-top:16px; padding:16px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px;">
+    <div
+      style="margin-top:16px; padding:16px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px;">
       <pre style="white-space:pre-wrap; margin:0; color:#e2e8f0; line-height:1.6;" th:text="${board.content}"></pre>
     </div>
     <div style="display:flex; gap:8px; margin-top:20px;">
+      <!-- 본인 글일 경우에만 수정/삭제 버튼 노출 (th:if) -->
       <a th:if="${session.email != null and session.email == board.author}"
-         th:href="@{/board_edit/{id}(id=${board.id})}"
-         style="padding:10px 14px; background: rgba(34,211,238,0.12); color:#22d3ee; border:1px solid rgba(34,211,238,0.35); border-radius:12px; text-decoration:none; font-weight:700;">
+        th:href="@{/board_edit/{id}(id=${board.id})}"
+        style="padding:10px 14px; background: rgba(34,211,238,0.12); color:#22d3ee; border:1px solid rgba(34,211,238,0.35); border-radius:12px; text-decoration:none; font-weight:700;">
         수정
       </a>
       <form th:if="${session.email != null and session.email == board.author}"
-            th:action="@{/api/boards/{id}(id=${board.id})}" method="post"
-            onsubmit="return confirm('정말 삭제하시겠습니까?');">
-        <input type="hidden" name="_method" value="delete"/>
-        <button type="submit" style="padding:10px 14px; background: rgba(248,113,113,0.12); color:#f87171; border:1px solid rgba(248,113,113,0.35); border-radius:12px; font-weight:700; cursor:pointer;">
+        th:action="@{/api/boards/{id}(id=${board.id})}" method="post" onsubmit="return confirm('정말 삭제하시겠습니까?');">
+        <input type="hidden" name="_method" value="delete" />
+        <button type="submit"
+          style="padding:10px 14px; background: rgba(248,113,113,0.12); color:#f87171; border:1px solid rgba(248,113,113,0.35); border-radius:12px; font-weight:700; cursor:pointer;">
           삭제
         </button>
       </form>
     </div>
   </div>
 </body>
+
 </html>
